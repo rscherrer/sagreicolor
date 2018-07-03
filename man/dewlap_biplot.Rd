@@ -4,7 +4,8 @@
 \alias{dewlap_biplot}
 \title{Dewlap color space biplot}
 \usage{
-dewlap_biplot(pca, groups, i = 2, j = 3, plotCentroids = T)
+dewlap_biplot(pca, groups, i = 2, j = 3, plotCentroids = T,
+  whatLegend = "habitat")
 }
 \arguments{
 \item{pca}{A \code{prcomp} object.}
