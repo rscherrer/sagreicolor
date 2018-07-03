@@ -6,6 +6,7 @@
 #' @param groups A data frame containing information about island and habitat for each lizard.
 #' @param i,j Which components to plot against each other? Defaults to i = 2 and j = 3.
 #' @param plotCentroids Logical. Whether to plot habitat and island centroids (T, default) or all observations (F).
+#' @param whatLegend  A character vector. What legend to display? If contains "island", the legend of colors for island will be displayed in the top-left corner. If contains "habitat", the legend of shapes for habitats will be displayed in the bottom right corner.
 #' @return A plot.
 #' @author Raphael Scherrer
 #' @export
@@ -74,7 +75,7 @@ dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T, whatLege
   }
 
   # Legend
-  if("island" %in% plotLegend) legend("topleft", legend = unique(groups$island), col = unique(col), pch = 16, bty = "n")
-  if("habitat" %in% plotLegend) legend("bottomright", legend = unique(groups$habitat), pch = unique(pch), col = "black", bty = "n")
+  if("island" %in% whatLegend) legend("topleft", legend = unique(groups$island), col = unique(col), pch = 16, bty = "n")
+  if("habitat" %in% whatLegend) legend("bottomright", legend = unique(groups$habitat), pch = unique(pch), col = "black", bty = "n")
 
 }
