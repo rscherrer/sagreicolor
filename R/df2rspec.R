@@ -5,6 +5,7 @@
 #' @param df A data frame of reflectance to convert. Columns for wavelengths must have "wl" preceding the wavelength in their name, e.g. "wl500" for 500nm. There is one row per measurement.
 #' @return An \code{rspec} data frame.
 #' @author Raphael Scherrer
+#' @export
 
 df2rspec <- function(df) {
 

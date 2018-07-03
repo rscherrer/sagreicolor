@@ -8,6 +8,7 @@
 #' @param plotCentroids Logical. Whether to plot habitat and island centroids (T, default) or all observations (F).
 #' @return A plot.
 #' @author Raphael Scherrer
+#' @export
 
 dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T){
 

@@ -7,6 +7,7 @@
 #' @param cols A vector of column numbers, indicating what measurements to apply the smoothing to. Defaults to all. Note: first measurement is column 2.
 #' @return An \code{rspec} data frame with artifacts removed.
 #' @author Raphael Scherrer
+#' @export
 
 linearize = function(specs, where, cols=2:ncol(specs)) {
   x1 = which(specs$wl==where[1])

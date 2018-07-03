@@ -6,5 +6,6 @@
 #' @param n An integer: what principal component?
 #' @return A numeric, the proportion of variance in the dataset explained by the principal component.
 #' @author Raphael Scherrer
+#' @export
 
 calc_expvar <- function(pca, n) pca$sdev[n] / sum(pca$sdev)

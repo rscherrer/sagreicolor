@@ -5,6 +5,7 @@
 #' @param specdata A data frame with reflectance in columns. The columns with reflectance information must have "wl" in their name, e.g. "wl500" for 500nm.
 #' @return A \code{prcomp} object.
 #' @author Raphael Scherrer
+#' @export
 
 spectral_pca <- function(specdata) {
 
