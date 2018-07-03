@@ -10,7 +10,7 @@
 #' @author Raphael Scherrer
 #' @export
 
-dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T){
+dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T, whatLegend = "habitat"){
 
   # Explained variance
   expvars <- sapply(c(i,j), calc_expvar, pca = pca)
@@ -74,7 +74,7 @@ dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T){
   }
 
   # Legend
-  legend("topleft", legend = unique(groups$island), col = unique(col), pch = 16, bty = "n")
-  legend("bottomright", legend = unique(groups$habitat), pch = unique(pch), col = "black", bty = "n")
+  if("island" %in% plotLegend) legend("topleft", legend = unique(groups$island), col = unique(col), pch = 16, bty = "n")
+  if("habitat" %in% plotLegend) legend("bottomright", legend = unique(groups$habitat), pch = unique(pch), col = "black", bty = "n")
 
 }
