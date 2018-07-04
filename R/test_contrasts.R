@@ -6,12 +6,12 @@
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @return A data frame with the results of each Wilk's lambda test in rows. In columns,
-#' \begin{itemize}
+#' \itemize{
 #' \item{\code{Wilks} Wilk's lambda.}
 #' \item{\code{approx.F} F-value computed from Wilk's lambda.}
 #' \item{\code{df1}, \code{df2} Numerator and denominator degrees of freedom of the F distribution.}
 #' \item{\code{p.value} P-value computed from the F-distribution.}
-#' \end{itemize}
+#' }
 #' @author Raphael Scherrer
 #' @note This procedure was inspired from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
 #' @export

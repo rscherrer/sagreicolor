@@ -15,12 +15,12 @@ test_contrasts(W, specdata, vars)
 }
 \value{
 A data frame with the results of each Wilk's lambda test in rows. In columns,
-\begin{itemize}
+\itemize{
 \item{\code{Wilks} Wilk's lambda.}
 \item{\code{approx.F} F-value computed from Wilk's lambda.}
 \item{\code{df1}, \code{df2} Numerator and denominator degrees of freedom of the F distribution.}
 \item{\code{p.value} P-value computed from the F-distribution.}
-\end{itemize}
+}
 }
 \description{
 This function tests for the significance of contrasts between groups in a multidimensional space. It can test several contrasts in a single run. For each contrast, it performs Wilk's lambda test and computes a p-value.
