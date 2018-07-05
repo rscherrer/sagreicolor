@@ -4,7 +4,7 @@
 \alias{test_contrasts}
 \title{Test multivariate contrasts}
 \usage{
-test_contrasts(W, specdata, vars)
+test_contrasts(W, specdata, vars, method = "bonferroni")
 }
 \arguments{
 \item{W}{A matrix indicating all contrasts to be tested, or a vector if only one contrast. The number of rows is the number of contrasts to test. The number of columns is the number of groups. The matrix/vector is filled with zeros, except for a 1 and a -1 at the position of the groups that are to be contrasted.}
@@ -12,6 +12,8 @@ test_contrasts(W, specdata, vars)
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".}
 
 \item{vars}{A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.}
+
+\item{method}{Correction method for adjusting p-values.}
 }
 \value{
 A data frame with the results of each Wilk's lambda test in rows. In columns,

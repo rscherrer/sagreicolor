@@ -5,6 +5,7 @@
 #' @param W A matrix indicating all contrasts to be tested, or a vector if only one contrast. The number of rows is the number of contrasts to test. The number of columns is the number of groups. The matrix/vector is filled with zeros, except for a 1 and a -1 at the position of the groups that are to be contrasted.
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
+#' @param method Correction method for adjusting p-values.
 #' @return A data frame with the results of each Wilk's lambda test in rows. In columns,
 #' \itemize{
 #' \item{\code{Wilks} Wilk's lambda.}
@@ -16,7 +17,7 @@
 #' @note This procedure was inspired from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
 #' @export
 
-test_contrasts <- function(W, specdata, vars) {
+test_contrasts <- function(W, specdata, vars, method = "bonferroni") {
 
   # Security check
   if(!inherits(W, "matrix")) {
@@ -95,7 +96,13 @@ test_contrasts <- function(W, specdata, vars) {
 
   })
 
-  return(as.data.frame(t(testContrasts)))
+  # Convert to data frame
+  testContrasts <- as.data.frame(t(testContrasts))
+
+  # Adjust p-values to correct for multiple testing
+  testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
+
+  return(testContrasts)
 
 }
 
