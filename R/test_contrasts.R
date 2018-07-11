@@ -18,7 +18,10 @@
 #' @note This procedure was inspired from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
 #' @export
 
-test_contrasts <- function(W, specdata, vars, method = "bonferroni") {
+test_contrasts <- function(W, specdata, vars, multi = T, method = "bonferroni") {
+
+  # Load packages
+  if(multi) library(nparcomp)
 
   # Security check
   if(!inherits(W, "matrix")) {
@@ -36,72 +39,92 @@ test_contrasts <- function(W, specdata, vars, method = "bonferroni") {
   grouping <- with(specdata, island:habitat)
   groups <- unique(grouping)
 
-  # Multivariate means for each component in each group
-  M <- as.matrix(apply(Y, 2, function(y) tapply(y, grouping, mean)), ncol = nlevels(specdata$island), nrow = nlevels(specdata$habitat))
-  M <- na.exclude(M)
+  # If multivariate contrasts are to be tested...
+  if(multi) {
 
-  # Counts in each group (including empty groups)
-  N <- table(grouping)
-  N <- N[N != 0]
+    # Multivariate means for each component in each group
+    M <- as.matrix(apply(Y, 2, function(y) tapply(y, grouping, mean)), ncol = nlevels(specdata$island), nrow = nlevels(specdata$habitat))
+    M <- na.exclude(M)
 
-  # For each contrast (row in the matrix)
-  testContrasts <- apply(W, 1, function(W) {
+    # Counts in each group (including empty groups)
+    N <- table(grouping)
+    N <- N[N != 0]
 
-    # Calculate weighted sum of squared weights
-    SW <- sum(W^2 / N)
+    # For each contrast (row in the matrix)
+    testContrasts <- apply(W, 1, function(W) {
 
-    # Calculate the vector of contrasts
-    C <- M[W == 1,] - M[W == -1]
+      # Calculate weighted sum of squared weights
+      SW <- sum(W^2 / N)
 
-    # Calculate the hypothesis matrix
-    H <- (cbind(C) %*% rbind(C)) / SW
+      # Calculate the vector of contrasts
+      C <- M[W == 1,] - M[W == -1]
 
-    # Calculate the residual error matrices in each group
-    residuals <- lapply(seq_along(groups), function(i) {
+      # Calculate the hypothesis matrix
+      H <- (cbind(C) %*% rbind(C)) / SW
 
-      # Current group
-      curr.group <- groups[i]
+      # Calculate the residual error matrices in each group
+      residuals <- lapply(seq_along(groups), function(i) {
 
-      # Subset of the data
-      X <- subset(Y, grouping == curr.group)
+        # Current group
+        curr.group <- groups[i]
 
-      # Calculate all deviations from the mean
-      deviations <- X - na.exclude(M)[i,]
+        # Subset of the data
+        X <- subset(Y, grouping == curr.group)
 
-      # Multiply each deviation vector by its transpose
-      devTdev <- lapply(1:nrow(deviations), function(j) deviations[j,] %*% t(deviations[j,]))
+        # Calculate all deviations from the mean
+        deviations <- X - na.exclude(M)[i,]
 
-      return(sagreicolor::add_matrices(devTdev))
+        # Multiply each deviation vector by its transpose
+        devTdev <- lapply(1:nrow(deviations), function(j) deviations[j,] %*% t(deviations[j,]))
+
+        return(sagreicolor::add_matrices(devTdev))
+      })
+
+      # Calculate the total residual error matrix
+      E <- sagreicolor::add_matrices(residuals)
+
+      # Calculate Wilk's lambda
+      Lambda <- det(E) / det(H + E)
+
+      # Calculate degrees of freedom
+      df1 <- ncol(Y) #no.variables
+      df2 <- nrow(Y) - length(groups) - ncol(Y) + 1 #no.observations - no.groups - no.variables + 1
+
+      # Calculate approx. F
+      F.stat <- (1 - Lambda) / Lambda * df2 / df1
+
+      # Calculate p-value from an F distribution
+      p.value <- 1 - pf(F.stat, df1, df2)
+
+      # Output
+      out <- c(Lambda, F.stat, df1, df2, p.value)
+      names(out) <- c("Wilks", "approx.F", "df1", "df2", "p.value")
+      return(out)
+
     })
 
-    # Calculate the total residual error matrix
-    E <- sagreicolor::add_matrices(residuals)
+    # Convert to data frame
+    testContrasts <- as.data.frame(t(testContrasts))
 
-    # Calculate Wilk's lambda
-    Lambda <- det(E) / det(H + E)
+    # Adjust p-values to correct for multiple testing
+    testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
 
-    # Calculate degrees of freedom
-    df1 <- ncol(Y) #no.variables
-    df2 <- nrow(Y) - length(groups) - ncol(Y) + 1 #no.observations - no.groups - no.variables + 1
+  } else {
 
-    # Calculate approx. F
-    F.stat <- (1 - Lambda) / Lambda * df2 / df1
+    # Otherwise, apply to each dependent variable...
+    testContrasts <- lapply(seq_along(ncol(Y)), function(i) {
 
-    # Calculate p-value from an F distribution
-    p.value <- 1 - pf(F.stat, df1, df2)
+      # Current dependent variable
+      Y <- Y[,i]
 
-    # Output
-    out <- c(Lambda, F.stat, df1, df2, p.value)
-    names(out) <- c("Wilks", "approx.F", "df1", "df2", "p.value")
-    return(out)
+      # Tukey's multiple comparison procedure
+      tukey.res <- nparcomp::nparcomp(Y ~ grouping, type = "Tukey", contrast.matrix = W)
 
-  })
+      return(tukey.res)
 
-  # Convert to data frame
-  testContrasts <- as.data.frame(t(testContrasts))
+    })
 
-  # Adjust p-values to correct for multiple testing
-  testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
+  }
 
   return(testContrasts)
 
