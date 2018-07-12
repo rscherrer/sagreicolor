@@ -71,7 +71,7 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
       testContrasts <- nparcomp::nparcomp(Y ~ grouping, data = specdata, type = "UserDefined", contrast.matrix = W, asy.method = "mult.t", info = F)
 
       # Vector of P-values
-      pvalues <- testContrasts$Analysis$pValue
+      pvalues <- testContrasts$Analysis$p.Value
 
       # Plot 95% confidence intervals
       if(plotit) plot(testContrasts)
@@ -80,8 +80,6 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
     # What contrasts are significant?
     whichContrasts <- which_contrasts(pvalues, W, groups, alpha = 0.05)
-
-    print(whichContrasts)
 
     return(list(testContrasts, whichContrasts))
 
