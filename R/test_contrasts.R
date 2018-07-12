@@ -72,6 +72,8 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
     }
 
+    return(testContrasts)
+
   })
 
   return(testContrasts)
