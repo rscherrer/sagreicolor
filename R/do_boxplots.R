@@ -10,6 +10,18 @@
 #' @author Raphael Scherrer
 #' @export
 
+#' Boxplot of color metrics across islands and habitats
+#'
+#' This function makes a boxplot of a given color metric across all islands and all habitats. It can save the plot as a PDF file.
+#'
+#' @param specdata A data frame containing the variable to plot. It should have a column "island" and a column "habitat".
+#' @param var The name of the variable to plot, as it appears in \code{colnames(specdata)}.
+#' @param filename A string. Name of the PDF file in which to save the plot. Does not save PDF if not specified. Can also be a path to the file to be created. Don't forget to add ".pdf" at the end!
+#' @param isJitter Logical. Whether to plot jittered points instead of boxplots. Good way to view outliers.
+#' @return A plot.
+#' @author Raphael Scherrer
+#' @export
+
 do_boxplots = function(specdata, var, filename = NULL, isJitter = F, ...) {
 
   Y = specdata[,var]
@@ -46,15 +58,18 @@ do_boxplots = function(specdata, var, filename = NULL, isJitter = F, ...) {
   yIslandLabels <- min(Y) - 2 * a * (max(Y) - min(Y))
   xIslandLabels <- seq(from = median(seq_along(habitatNames)), by = 4, length.out = length(islandNames))
 
+  # Set y limits
+  ylim <- c(min(Y) - a * (max(Y) - min(Y)), max(Y))
+
   # Plot
   if(!is.null(filename)) pdf(filename)
 
   # Set graphical parameters
   defaultPar <- par()
-  par(oma = c(10,0,0,0), xpd = NA, pin = c(4,3))
+  par(oma = c(5,0,0,0), xpd = NA, pin = c(5,4))
 
   # Boxplot
-  with(specdata, boxplot(Y ~ habitat:island, col=colBoxes, border=bordBoxes, axes=F, outline=F))
+  with(specdata, boxplot(Y ~ habitat:island, col=colBoxes, border=bordBoxes, axes=F, outline=F, ylim = ylim))
 
   # Fill with points if wanted
   if(isJitter) with(specdata, stripchart(Y ~ habitat:island, vertical = T, method = "jitter", add = T, pch = 20, col = col))
