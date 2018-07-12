@@ -12,14 +12,14 @@
 
 # Function to check normality of each variable
 check_normality <- function(specdata, vars, plotit = T, method = "bonferroni") {
-  
+
   # What are the groups?
   grouping <- with(specdata, island:habitat)
   groups <- unique(grouping)
-  
+
   # Perform Shapiro test on each variable
   shapiro.res <- apply(specdata[,vars], 2, function(x) {
-    
+
     res <- tapply(x, grouping, function(x) {
       res <- shapiro.test(x)
       W <- res$statistic
@@ -27,24 +27,24 @@ check_normality <- function(specdata, vars, plotit = T, method = "bonferroni") {
       return(c(W, p))
     })
   })
-  
+
   # Reshape the output
   shapiro.res <- lapply(shapiro.res, function(shapiro.res) {
     shapiro.res <- do.call("rbind", shapiro.res)
     colnames(shapiro.res) <- c("W", "p")
     return(shapiro.res)
   })
-  
+
   # Extract p-values
   shapiro.p <- do.call("c", lapply(shapiro.res, function(shapiro.res) shapiro.res[,2]))
-  
+
   # Compute adjusted p-values
   shapiro.padj <- p.adjust(shapiro.p, method)
-  
+
   # Plot
   if(plotit) {
-    barplot(shapiro.padj, main = "Shapiro test", ylab = "Adjusted P-value")
+    barplot(shapiro.padj, main = "Normality", ylab = "Adjusted P-value", xlab = NULL)
     abline(h = 0.05, lty = 2)
   }
-  
+
 }
