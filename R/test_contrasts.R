@@ -8,7 +8,14 @@
 #' @param parametric Logical. If \code{TRUE} (default), parametric multiple comparisons are performed, otherwise a non-parametric procedure is used.
 #' @param plotit Logical. If \code{TRUE}, plots 95% confidence intervals of the contrasts. One plot per dependent variable.
 #' @param method Correction method for adjusting p-values (parametric procedure).
-#' @return A list with one element for each dependent variable in \code{vars}. Each element is a list of two sub-elements. The first of the two sub-elemeents is either the output of the \code{summary.glht} function (parametric) or of the \code{nparcomp} function (non-parametric). It contains information about contrasts, P-values and confidence intervals. The second sub-element is a table with the names of the habitats and islands for which contrasts were significant.
+#' @return A list with one element for each dependent variable in \code{vars}. Each element is a data frame with columns:
+#' \itemize{
+#' \item{\code{hab1, hab2} The habitats being compared.}
+#' \item{\code{estimate} The estimated contrast between means.}
+#' \item{\code{lower, upper} The lower and upper bounds of the adjusted 95% confidence interval.}
+#' \item{\code{statistic} Statistic used for computing P-values. If \code{parametric = TRUE}, t-statistic, if \code{parametric = FALSE}, the multivariate Satterthwaite t-approximation is used.}
+#' \item{\code{p.adj} Simultaneous P-values adjusted (by \code{method} if parametric, and \code{"bonferroni"} by default if non-parametric).}
+#' }
 #' @author Raphael Scherrer
 #' @note Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp. Note also that performing multiple comparisons one dependent variable at a time is not so bad if variables have limited correlation, as in the case of principal components (Krishnaiah and Reising 2006).
 #' @export
@@ -58,8 +65,16 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
       # Simultaneously test the general linear hypotheses
       testContrasts <- summary(multcomp.res, test = adjusted(method))
 
-      # Vector of P-values
-      pvalues <- testContrasts$test$pvalues
+      # Adjusted confidence intervals
+      confInt <- confint(testContrasts)
+
+      testContrasts <- data.frame(
+        estimate = testContrasts$test$coefficients,
+        lower = confInt$confint[,"lwr"],
+        upper = confInt$confint[,"upr"],
+        statistic = testContrasts$test$tstat,
+        p.adj = testContrasts$test$pvalues
+      )
 
       # Plot 95% confidence intervals
       if(plotit) plot(multcomp.res)
@@ -70,20 +85,32 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
       testContrasts <- nparcomp::nparcomp(Y ~ grouping, data = specdata, type = "UserDefined", contrast.matrix = W, asy.method = "mult.t", info = F)
 
-      # Vector of P-values
-      pvalues <- testContrasts$Analysis$p.Value
+      testContrasts <- testContrasts$Analysis[,-1]
+
+      colnames(testContrasts) <- c("estimate", "lower", "upper", "statistic", "p.value")
 
       # Plot 95% confidence intervals
       if(plotit) plot(testContrasts)
 
     }
 
-    # What contrasts are significant?
-    whichContrasts <- which_contrasts(pvalues, W, groups, alpha = 0.05)
+    # Add identity of the contrasts
+    contrasts <- apply(W, 1, function(W) {
+      idx <- W %in% c(-1,1)
+      return(groups[idx])
+    })
 
-    return(list(testContrasts, whichContrasts))
+    contrasts <- t(contrasts)
+
+    testContrasts <- cbind(contrasts, testContrasts)
+
+    colnames(testContrasts)[c(1,2)] <- c("hab1", "hab2")
+
+    return(testContrasts)
 
   })
+
+  names(testContrasts) <- vars
 
   return(testContrasts)
 
