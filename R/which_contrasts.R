@@ -14,7 +14,10 @@
 which_contrasts <- function(pvalues, W, groups, alpha = 0.05) {
 
   # What contrasts are significant?
-  whichContrast <- W[pvalues < alpha,]
+  whichContrasts <- W[pvalues < alpha,]
+
+  whichContrasts <- rbind(whichContrasts)
+
   whichGroups <- apply(whichContrast, 1, function(W) {
     idx <- W %in% c(-1,1)
     whichGroups <- groups[idx]
