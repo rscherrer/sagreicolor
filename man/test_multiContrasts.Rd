@@ -29,7 +29,7 @@ A data frame with the results of each Wilk's lambda test in rows. In columns,
 This function tests for significant contrasts between multivariate habitat-means within islands. The procedure is parametric and involves calculation of Wilk's lambda and P-value adjustment.
 }
 \note{
-The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
+The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/. Also prints a table with all significant contrasts to the prompt.
 }
 \author{
 Raphael Scherrer

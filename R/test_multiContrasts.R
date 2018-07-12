@@ -15,7 +15,7 @@
 #' \item{\code{p.adj} Corrected P-value.}
 #' }
 #' @author Raphael Scherrer
-#' @note The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
+#' @note The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/. Also prints a table with all significant contrasts to the prompt.
 #' @export
 
 # Function to test for significant contrasts between multivariate means (parametric)

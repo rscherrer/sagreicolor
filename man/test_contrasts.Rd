@@ -21,7 +21,7 @@ test_contrasts(W, specdata, vars, parametric = T, plotit = T,
 \item{method}{Correction method for adjusting p-values (parametric procedure).}
 }
 \value{
-A list with one element for each dependent variable in \code{vars}. Each element is either the output of the \code{summary.glht} function (parametric) or of the \code{nparcomp} function (non-parametric). It contains information about contrasts, P-values and confidence intervals.
+A list with one element for each dependent variable in \code{vars}. Each element is either the output of the \code{summary.glht} function (parametric) or of the \code{nparcomp} function (non-parametric). It contains information about contrasts, P-values and confidence intervals. Also prints a table with all significant contrasts to the prompt.
 }
 \description{
 This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95% confidence intervals of the differences in means.
