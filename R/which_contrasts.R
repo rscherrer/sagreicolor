@@ -18,7 +18,7 @@ which_contrasts <- function(pvalues, W, groups, alpha = 0.05) {
 
   whichContrasts <- rbind(whichContrasts)
 
-  whichGroups <- apply(whichContrast, 1, function(W) {
+  whichGroups <- apply(whichContrasts, 1, function(W) {
     idx <- W %in% c(-1,1)
     whichGroups <- groups[idx]
     return(whichGroups)
