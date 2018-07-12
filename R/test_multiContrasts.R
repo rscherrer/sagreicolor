@@ -108,7 +108,9 @@ test_multiContrasts <- function(W, specdata, vars, method = "bonferroni") {
   pvalues <- testMulti$p.adj
 
   # What contrasts are significant?
-  which_contrasts(pvalues, W, groups, alpha = 0.05)
+  whichContrasts <- which_contrasts(pvalues, W, groups, alpha = 0.05)
+
+  print(whichContrasts)
 
   return(testContrasts)
 

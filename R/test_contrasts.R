@@ -79,7 +79,9 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
     }
 
     # What contrasts are significant?
-    which_contrasts(pvalues, W, groups, alpha = 0.05)
+    whichContrasts <- which_contrasts(pvalues, W, groups, alpha = 0.05)
+
+    print(whichContrasts)
 
     return(testContrasts)
 
