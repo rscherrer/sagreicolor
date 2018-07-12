@@ -10,17 +10,20 @@
 
 # Function to perform (multiple) ANOVA
 dewlap_anova <- function(specdata, vars) {
-  
-  sapply(vars, function(curr.variable) {
-    
+
+  anova.res <- lapply(vars, function(curr.variable) {
+
     specdata$X <- specdata[,curr.variable]
-    
+
     # Fit a linear model
     mod <- lm(X ~ island*habitat, data = specdata)
-    
-    # Perform two-way ANOVA
-    print(anova(mod))
-    
+
+    anova.res <- anova(mod)
+
+    return(anova.res)
+
   })
-  
+
+  return(anova.res)
+
 }
