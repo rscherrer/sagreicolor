@@ -1,27 +1,27 @@
-#' Test multivariate contrasts
+#' Test (multiple) univariate contrasts
 #'
-#' This function tests for the significance of contrasts between groups in a multidimensional space. It can test several contrasts in a single run. For each contrast, it performs Wilk's lambda test and computes a p-value.
+#' This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95% confidence intervals of the differences in means.
 #'
 #' @param W A matrix indicating all contrasts to be tested, or a vector if only one contrast. The number of rows is the number of contrasts to test. The number of columns is the number of groups. The matrix/vector is filled with zeros, except for a 1 and a -1 at the position of the groups that are to be contrasted.
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
-#' @param method Correction method for adjusting p-values.
-#' @return A data frame with the results of each Wilk's lambda test in rows. In columns,
-#' \itemize{
-#' \item{\code{Wilks} Wilk's lambda.}
-#' \item{\code{approx.F} F-value computed from Wilk's lambda.}
-#' \item{\code{df1}, \code{df2} Numerator and denominator degrees of freedom of the F distribution.}
-#' \item{\code{p.value} P-value computed from the F-distribution.}
-#' \item{\code{p.adj} Corrected P-value.}
-#' }
+#' @param parametric Logical. If \code{TRUE} (default), parametric multiple comparisons are performed, otherwise a non-parametric procedure is used.
+#' @param plotit Logical. If \code{TRUE}, plots 95% confidence intervals of the contrasts. One plot per dependent variable.
+#' @param method Correction method for adjusting p-values (parametric procedure).
+#' @return A list with one element for each dependent variable in \code{vars}. Each element is either the output of the \code{summary.glht} function (parametric) or of the \code{nparcomp} function (non-parametric). It contains information about contrasts, P-values and confidence intervals.
 #' @author Raphael Scherrer
-#' @note This procedure was inspired from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
+#' @note Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp.
 #' @export
 
-test_contrasts <- function(W, specdata, vars, multi = T, method = "bonferroni") {
+# Function to test for significant contrasts in a set of dependent variables independently (parametric or non-parametric)
+test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method = "bonferroni") {
 
   # Load packages
-  if(multi) library(nparcomp)
+  if(parametric) {
+    library(multcomp)
+  } else {
+    library(nparcomp)
+  }
 
   # Security check
   if(!inherits(W, "matrix")) {
@@ -39,95 +39,41 @@ test_contrasts <- function(W, specdata, vars, multi = T, method = "bonferroni") 
   grouping <- with(specdata, island:habitat)
   groups <- unique(grouping)
 
-  # If multivariate contrasts are to be tested...
-  if(multi) {
+  # Apply to each dependent variable
+  testContrasts <- lapply(seq_len(ncol(Y)), function(i) {
 
-    # Multivariate means for each component in each group
-    M <- as.matrix(apply(Y, 2, function(y) tapply(y, grouping, mean)), ncol = nlevels(specdata$island), nrow = nlevels(specdata$habitat))
-    M <- na.exclude(M)
+    # Current dependent variable
+    Y <- Y[,i]
 
-    # Counts in each group (including empty groups)
-    N <- table(grouping)
-    N <- N[N != 0]
+    if(parametric) {
 
-    # For each contrast (row in the matrix)
-    testContrasts <- apply(W, 1, function(W) {
+      message("Performing parametric multiple comparisons...")
 
-      # Calculate weighted sum of squared weights
-      SW <- sum(W^2 / N)
+      # Fit a linear model
+      fit <- lm(Y ~ grouping)
 
-      # Calculate the vector of contrasts
-      C <- M[W == 1,] - M[W == -1]
+      # General linear hypotheses with linear functions specified by multiple comparisons among groups as determined by the user-defined contrast weight matrix
+      multcomp.res <- multcomp::glht(fit, linfct = mcp(grouping = W))
 
-      # Calculate the hypothesis matrix
-      H <- (cbind(C) %*% rbind(C)) / SW
+      # Simultaneously test the general linear hypotheses
+      testContrasts <- summary(multcomp.res, test = adjusted(method))
 
-      # Calculate the residual error matrices in each group
-      residuals <- lapply(seq_along(groups), function(i) {
+      # Plot 95% confidence intervals
+      if(plotit) plot(multcomp.res)
 
-        # Current group
-        curr.group <- groups[i]
+    } else {
 
-        # Subset of the data
-        X <- subset(Y, grouping == curr.group)
+      message("Performing non-parametric multiple comparisons...")
 
-        # Calculate all deviations from the mean
-        deviations <- X - na.exclude(M)[i,]
+      testContrasts <- nparcomp::nparcomp(Y ~ grouping, data = specdata, type = "UserDefined", contrast.matrix = W, asy.method = "mult.t")
 
-        # Multiply each deviation vector by its transpose
-        devTdev <- lapply(1:nrow(deviations), function(j) deviations[j,] %*% t(deviations[j,]))
+      # Plot 95% confidence intervals
+      if(plotit) plot(testContrasts)
 
-        return(sagreicolor::add_matrices(devTdev))
-      })
+    }
 
-      # Calculate the total residual error matrix
-      E <- sagreicolor::add_matrices(residuals)
-
-      # Calculate Wilk's lambda
-      Lambda <- det(E) / det(H + E)
-
-      # Calculate degrees of freedom
-      df1 <- ncol(Y) #no.variables
-      df2 <- nrow(Y) - length(groups) - ncol(Y) + 1 #no.observations - no.groups - no.variables + 1
-
-      # Calculate approx. F
-      F.stat <- (1 - Lambda) / Lambda * df2 / df1
-
-      # Calculate p-value from an F distribution
-      p.value <- 1 - pf(F.stat, df1, df2)
-
-      # Output
-      out <- c(Lambda, F.stat, df1, df2, p.value)
-      names(out) <- c("Wilks", "approx.F", "df1", "df2", "p.value")
-      return(out)
-
-    })
-
-    # Convert to data frame
-    testContrasts <- as.data.frame(t(testContrasts))
-
-    # Adjust p-values to correct for multiple testing
-    testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
-
-  } else {
-
-    # Otherwise, apply to each dependent variable...
-    testContrasts <- lapply(seq_along(ncol(Y)), function(i) {
-
-      # Current dependent variable
-      Y <- Y[,i]
-
-      # Tukey's multiple comparison procedure
-      tukey.res <- nparcomp::nparcomp(Y ~ grouping, type = "Tukey", contrast.matrix = W)
-
-      return(tukey.res)
-
-    })
-
-  }
+  })
 
   return(testContrasts)
 
 }
-
-

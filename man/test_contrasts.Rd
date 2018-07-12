@@ -2,9 +2,10 @@
 % Please edit documentation in R/test_contrasts.R
 \name{test_contrasts}
 \alias{test_contrasts}
-\title{Test multivariate contrasts}
+\title{Test (multiple) univariate contrasts}
 \usage{
-test_contrasts(W, specdata, vars, multi = T, method = "bonferroni")
+test_contrasts(W, specdata, vars, parametric = T, plotit = T,
+  method = "bonferroni")
 }
 \arguments{
 \item{W}{A matrix indicating all contrasts to be tested, or a vector if only one contrast. The number of rows is the number of contrasts to test. The number of columns is the number of groups. The matrix/vector is filled with zeros, except for a 1 and a -1 at the position of the groups that are to be contrasted.}
@@ -13,23 +14,20 @@ test_contrasts(W, specdata, vars, multi = T, method = "bonferroni")
 
 \item{vars}{A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.}
 
-\item{method}{Correction method for adjusting p-values.}
+\item{parametric}{Logical. If \code{TRUE} (default), parametric multiple comparisons are performed, otherwise a non-parametric procedure is used.}
+
+\item{plotit}{Logical. If \code{TRUE}, plots 95% confidence intervals of the contrasts. One plot per dependent variable.}
+
+\item{method}{Correction method for adjusting p-values (parametric procedure).}
 }
 \value{
-A data frame with the results of each Wilk's lambda test in rows. In columns,
-\itemize{
-\item{\code{Wilks} Wilk's lambda.}
-\item{\code{approx.F} F-value computed from Wilk's lambda.}
-\item{\code{df1}, \code{df2} Numerator and denominator degrees of freedom of the F distribution.}
-\item{\code{p.value} P-value computed from the F-distribution.}
-\item{\code{p.adj} Corrected P-value.}
-}
+A list with one element for each dependent variable in \code{vars}. Each element is either the output of the \code{summary.glht} function (parametric) or of the \code{nparcomp} function (non-parametric). It contains information about contrasts, P-values and confidence intervals.
 }
 \description{
-This function tests for the significance of contrasts between groups in a multidimensional space. It can test several contrasts in a single run. For each contrast, it performs Wilk's lambda test and computes a p-value.
+This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95% confidence intervals of the differences in means.
 }
 \note{
-This procedure was inspired from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
+Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp.
 }
 \author{
 Raphael Scherrer
