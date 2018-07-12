@@ -17,7 +17,6 @@ dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T, whatLege
   expvars <- sapply(c(i,j), calc_expvar, pca = pca)
 
   # General graphical parameters
-  main <- "Biplot"
   xlab <- paste0("PC", i, " (", round(expvars[1]*100, 2), "% variance)")
   ylab <- paste0("PC", j, " (", round(expvars[2]*100, 2), "% variance)")
 
@@ -47,7 +46,7 @@ dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T, whatLege
     col <- groups$island
 
     # Biplot of habitat centroids
-    plot(hCentroids[,i], hCentroids[,j], pch = pch, col = col, main = main, xlab = xlab, ylab = ylab, las = 1, asp = 1)
+    plot(hCentroids[,i], hCentroids[,j], pch = pch, col = col, xlab = xlab, ylab = ylab, las = 1, asp = 1)
 
     # Connect habitats with islands with segments
     x0 <- hCentroids[,i]
@@ -70,7 +69,7 @@ dewlap_biplot <- function(pca, groups, i = 2, j = 3, plotCentroids = T, whatLege
     col <- groups$island
 
     # Biplot
-    with(pca, plot(x[,i], x[,j], main = main, xlab = xlab, ylab = ylab, pch = pch, col = col, las = 1, asp = 1))
+    with(pca, plot(x[,i], x[,j], xlab = xlab, ylab = ylab, pch = pch, col = col, las = 1, asp = 1))
 
   }
 
