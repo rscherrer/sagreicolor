@@ -10,7 +10,7 @@
 #' @param method Correction method for adjusting p-values (parametric procedure).
 #' @return A list with one element for each dependent variable in \code{vars}. Each element is either the output of the \code{summary.glht} function (parametric) or of the \code{nparcomp} function (non-parametric). It contains information about contrasts, P-values and confidence intervals.
 #' @author Raphael Scherrer
-#' @note Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp.
+#' @note Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp. Note also that performing multiple comparisons one dependent variable at a time is not so bad if variables have limited correlation, as in the case of principal components (Krishnaiah and Reising 2006).
 #' @export
 
 # Function to test for significant contrasts in a set of dependent variables independently (parametric or non-parametric)
