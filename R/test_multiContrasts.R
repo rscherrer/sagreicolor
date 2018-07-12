@@ -106,7 +106,7 @@ test_multiContrasts <- function(W, specdata, vars, method = "bonferroni") {
   testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
 
   # Vector of p-values
-  pvalues <- testMulti$p.adj
+  pvalues <- testContrasts$p.adj
 
   # What contrasts are significant?
   whichContrasts <- which_contrasts(pvalues, W, groups, alpha = 0.05)
