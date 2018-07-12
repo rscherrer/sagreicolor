@@ -69,7 +69,7 @@ do_boxplots = function(specdata, var, filename = NULL, isJitter = F, ...) {
   par(oma = c(5,0,0,0), xpd = NA, pin = c(5,4))
 
   # Boxplot
-  with(specdata, boxplot(Y ~ habitat:island, col=colBoxes, border=bordBoxes, axes=F, outline=F, ylim = ylim))
+  with(specdata, boxplot(Y ~ habitat:island, col=colBoxes, border=bordBoxes, axes=F, outline=F, ylim = ylim, ylab = var))
 
   # Fill with points if wanted
   if(isJitter) with(specdata, stripchart(Y ~ habitat:island, vertical = T, method = "jitter", add = T, pch = 20, col = col))
