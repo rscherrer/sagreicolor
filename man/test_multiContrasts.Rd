@@ -16,15 +16,15 @@ test_multiContrasts(W, specdata, vars, method = "bonferroni")
 \item{method}{Correction method for adjusting p-values.}
 }
 \value{
-A list with two elements. The first element is a data frame with the results of each Wilk's lambda test in rows. In columns,
+A data frame with the results of each Wilk's lambda test in rows. In columns,
 \itemize{
+\item{\code{hab1}, \code{hab2} Habitats being compared.}
 \item{\code{Wilks} Wilk's lambda.}
 \item{\code{approx.F} F-value computed from Wilk's lambda.}
 \item{\code{df1}, \code{df2} Numerator and denominator degrees of freedom of the F distribution.}
 \item{\code{p.value} P-value computed from the F-distribution.}
 \item{\code{p.adj} Corrected P-value.}
 }
-The second element is a table with the names of the habitats for which contrasts were significant.
 }
 \description{
 This function tests for significant contrasts between multivariate habitat-means within islands. The procedure is parametric and involves calculation of Wilk's lambda and P-value adjustment.

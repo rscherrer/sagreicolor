@@ -6,15 +6,15 @@
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param method Correction method for adjusting p-values.
-#' @return A list with two elements. The first element is a data frame with the results of each Wilk's lambda test in rows. In columns,
+#' @return A data frame with the results of each Wilk's lambda test in rows. In columns,
 #' \itemize{
+#' \item{\code{hab1}, \code{hab2} Habitats being compared.}
 #' \item{\code{Wilks} Wilk's lambda.}
 #' \item{\code{approx.F} F-value computed from Wilk's lambda.}
 #' \item{\code{df1}, \code{df2} Numerator and denominator degrees of freedom of the F distribution.}
 #' \item{\code{p.value} P-value computed from the F-distribution.}
 #' \item{\code{p.adj} Corrected P-value.}
 #' }
-#' The second element is a table with the names of the habitats for which contrasts were significant.
 #' @author Raphael Scherrer
 #' @note The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
 #' @export
@@ -105,12 +105,17 @@ test_multiContrasts <- function(W, specdata, vars, method = "bonferroni") {
   # Adjust p-values to correct for multiple testing
   testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
 
-  # Vector of p-values
-  pvalues <- testContrasts$p.adj
+  # Names of the habitats in each contrast
+  contrasts <- apply(W, 1, function(W) {
+    idx <- W %in% c(-1, 1)
+    return(groups[idx])
+  })
 
-  # What contrasts are significant?
-  whichContrasts <- which_contrasts(pvalues, W, groups, alpha = 0.05)
+  contrasts <- t(contrasts)
 
-  return(list(testContrasts, whichContrasts))
+  testContrasts <- cbind(contrasts, testContrasts)
+  colnames(testContrasts)[c(1,2)] <- c("hab1", "hab2")
+
+  return(testContrasts)
 
 }
