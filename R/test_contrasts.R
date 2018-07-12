@@ -58,6 +58,9 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
       # Simultaneously test the general linear hypotheses
       testContrasts <- summary(multcomp.res, test = adjusted(method))
 
+      # Vector of P-values
+      pvalues <- testContrasts$test$pvalues
+
       # Plot 95% confidence intervals
       if(plotit) plot(multcomp.res)
 
@@ -65,12 +68,18 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
       message("Performing non-parametric multiple comparisons...")
 
-      testContrasts <- nparcomp::nparcomp(Y ~ grouping, data = specdata, type = "UserDefined", contrast.matrix = W, asy.method = "mult.t")
+      testContrasts <- nparcomp::nparcomp(Y ~ grouping, data = specdata, type = "UserDefined", contrast.matrix = W, asy.method = "mult.t", info = F)
+
+      # Vector of P-values
+      pvalues <- testContrasts$Analysis$pValue
 
       # Plot 95% confidence intervals
       if(plotit) plot(testContrasts)
 
     }
+
+    # What contrasts are significant?
+    which_contrasts(pvalues, W, groups, alpha = 0.05)
 
     return(testContrasts)
 
