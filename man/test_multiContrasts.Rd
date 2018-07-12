@@ -16,7 +16,7 @@ test_multiContrasts(W, specdata, vars, method = "bonferroni")
 \item{method}{Correction method for adjusting p-values.}
 }
 \value{
-A data frame with the results of each Wilk's lambda test in rows. In columns,
+A list with two elements. The first element is a data frame with the results of each Wilk's lambda test in rows. In columns,
 \itemize{
 \item{\code{Wilks} Wilk's lambda.}
 \item{\code{approx.F} F-value computed from Wilk's lambda.}
@@ -24,12 +24,13 @@ A data frame with the results of each Wilk's lambda test in rows. In columns,
 \item{\code{p.value} P-value computed from the F-distribution.}
 \item{\code{p.adj} Corrected P-value.}
 }
+The second element is a table with the names of the habitats for which contrasts were significant.
 }
 \description{
 This function tests for significant contrasts between multivariate habitat-means within islands. The procedure is parametric and involves calculation of Wilk's lambda and P-value adjustment.
 }
 \note{
-The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/. Also prints a table with all significant contrasts to the prompt.
+The parametric procedure was adapted from Charles Zaiontz's post on multivariate contrast testing in Excel: http://www.real-statistics.com/multivariate-statistics/multivariate-analysis-of-variance-manova/manova-follow-up-contrasts/.
 }
 \author{
 Raphael Scherrer
