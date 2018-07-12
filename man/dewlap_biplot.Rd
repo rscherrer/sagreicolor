@@ -16,7 +16,7 @@ dewlap_biplot(pca, groups, i = 2, j = 3, plotCentroids = T,
 
 \item{plotCentroids}{Logical. Whether to plot habitat and island centroids (T, default) or all observations (F).}
 
-\item{whatLegend}{A character vector. What legend to display? If contains "island", the legend of colors for island will be displayed in the top-left corner. If contains "habitat", the legend of shapes for habitats will be displayed in the bottom right corner.}
+\item{whatLegend}{A character vector. What legend to display? If contains "island", the legend of colors for island will be displayed in the top-left corner. If contains "habitat", the legend of shapes for habitats will be displayed in the bottom right corner. "n" if legend should not be plotted.}
 }
 \value{
 A plot.
