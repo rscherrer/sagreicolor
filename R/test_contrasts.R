@@ -62,6 +62,9 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
       # General linear hypotheses with linear functions specified by multiple comparisons among groups as determined by the user-defined contrast weight matrix
       multcomp.res <- multcomp::glht(fit, linfct = mcp(grouping = W))
 
+      # Plot 95% confidence intervals
+      if(plotit) plot(multcomp.res)
+
       # Simultaneously test the general linear hypotheses
       testContrasts <- summary(multcomp.res, test = adjusted(method))
 
@@ -76,21 +79,18 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
         padj = testContrasts$test$pvalues
       )
 
-      # Plot 95% confidence intervals
-      if(plotit) plot(multcomp.res)
-
     } else {
 
       message("Performing non-parametric multiple comparisons...")
 
       testContrasts <- nparcomp::nparcomp(Y ~ grouping, data = specdata, type = "UserDefined", contrast.matrix = W, asy.method = "mult.t", info = F)
 
+      # Plot 95% confidence intervals
+      if(plotit) plot(testContrasts)
+
       testContrasts <- testContrasts$Analysis[,-1]
 
       colnames(testContrasts) <- c("estimate", "lower", "upper", "statistic", "padj")
-
-      # Plot 95% confidence intervals
-      if(plotit) plot(testContrasts)
 
     }
 
