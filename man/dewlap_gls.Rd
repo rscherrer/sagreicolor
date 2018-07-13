@@ -14,7 +14,7 @@ dewlap_gls(specdata, vars, plotit = F)
 \item{plotit}{Logical. Whether to plot the residuals of the best model or not.}
 }
 \value{
-A list one element per dependent variable. Each sublist contains the best GLS model, and the ANOVA table summarizing the sequential LRT of its fixed effects. The function also plots the residuals (if \code{plotit = T}) and prints to the prompt the AIC tables used in variance structure comparisons, as well the ANOVA tables.
+A list one element per dependent variable. Each element contains an AIC table comparing variance structures, and the ANOVA table summarizing the sequential LRTs of fixed effects. The function also plots the residuals (if \code{plotit = T}) and prints to the prompt the best model with the best variance structure.
 }
 \description{
 This function fits GLS models to a set of dependent variables, one after the other. It compares several residual variance structures with AIC and retains the best. The fixed effects of the model are tested by model comparison using likelihood ratio tests.
