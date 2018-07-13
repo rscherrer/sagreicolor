@@ -11,17 +11,18 @@
 
 # Function to perform MANOVA on spectral data
 dewlap_manova <- function(specdata, vars, perVariable = T) {
-  
+
   # Extract a matrix of principal components
   Y <- as.matrix(specdata[,vars])
-  
+
   # Performing MANOVA
   MANOVA <- manova(Y ~ island*habitat, data = specdata)
-  
-  # Checking the result
-  print(summary(MANOVA, test = "Wilks"))
-  
+
+  manova.res <- summary(MANOVA, test = "Wilks")
+
   # Which dimensions differ across groups?
   if(perVariable) summary.aov(MANOVA)
-  
+
+  return(manova.res)
+
 }
