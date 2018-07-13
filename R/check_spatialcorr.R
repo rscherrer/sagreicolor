@@ -61,7 +61,7 @@ check_spatialcorr <- function(specdata, vars, plotit = T, test = "moran", method
   # Perform Mantel's test...
   if(test == "mantel") {
 
-    print("Performing Mantel's test...")
+    message("Performing Mantel's test...")
 
     res <- ape::mantel.test(dR, dG, graph = F, alternative = "greater")
     res <- with(res, c(Z = z.stat, p.value = p))
