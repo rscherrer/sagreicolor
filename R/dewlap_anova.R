@@ -20,9 +20,13 @@ dewlap_anova <- function(specdata, vars) {
 
     anova.res <- anova(mod)
 
+    anova.res <- as.data.frame(anova.res)
+
     return(anova.res)
 
   })
+
+  names(anova.res) <- vars
 
   return(anova.res)
 
