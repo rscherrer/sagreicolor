@@ -5,7 +5,7 @@
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param perVariable Logical. Whether to perform multiple two-way ANOVAs, one on each dependent variable. Defaults to \code{TRUE}.
-#' @return Nothing is returned. The summary of the MANOVA (and the multiple ANOVAs, if applicable) is printed to the command prompt.
+#' @return The MANOVA table is returned. The multiple ANOVAs, if applicable, are printed to the command prompt.
 #' @author Raphael Scherrer
 #' @export
 
@@ -16,12 +16,13 @@ dewlap_manova <- function(specdata, vars, perVariable = T) {
   Y <- as.matrix(specdata[,vars])
 
   # Performing MANOVA
-  MANOVA <- manova(Y ~ island*habitat, data = specdata)
+  manova.res <- manova(Y ~ island*habitat, data = specdata)
 
-  manova.res <- summary(MANOVA, test = "Wilks")
+  manova.res <- summary(manova.res, test = "Wilks")
+  manova.res <- manova.res$stats
 
   # Which dimensions differ across groups?
-  if(perVariable) summary.aov(MANOVA)
+  if(perVariable) summary.aov(manova.res)
 
   return(manova.res)
 

@@ -14,7 +14,7 @@ dewlap_manova(specdata, vars, perVariable = T)
 \item{perVariable}{Logical. Whether to perform multiple two-way ANOVAs, one on each dependent variable. Defaults to \code{TRUE}.}
 }
 \value{
-Nothing is returned. The summary of the MANOVA (and the multiple ANOVAs, if applicable) is printed to the command prompt.
+The MANOVA table is returned. The multiple ANOVAs, if applicable, are printed to the command prompt.
 }
 \description{
 This function performs a two-way MANOVA of dewlap color data cross islands and habitats. It can also perform multiple two-way ANOVAs, one on each dependent variable (equivalent to the \code{dewlap_anova} function).
