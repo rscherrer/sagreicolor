@@ -14,7 +14,7 @@ check_variances(specdata, vars, method = "bonferroni")
 \item{method}{A character, the method used for P-value correction. See \code{?p.adjust}.}
 }
 \value{
-A vector of adjusted P-values, one for each dependent variable.
+A data frame with Bartlett's K^2 statistic, the degrees of freedom of the approximate chi-squares distribution, P-value and adjusted P-value, for each dependent variable.
 }
 \description{
 This function tests for the homogeneity of the residuals across groups. It performs one Bartlett's test for each dependent variable. P-values are corrected.

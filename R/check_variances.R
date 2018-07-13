@@ -5,27 +5,35 @@
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param method A character, the method used for P-value correction. See \code{?p.adjust}.
-#' @return A vector of adjusted P-values, one for each dependent variable.
+#' @return A data frame with Bartlett's K^2 statistic, the degrees of freedom of the approximate chi-squares distribution, P-value and adjusted P-value, for each dependent variable.
 #' @author Raphael Scherrer
 #' @export
 
 # Function to test for homogenetiy of variance among groups for each dependent variable
 check_variances <- function(specdata, vars, method = "bonferroni") {
-  
+
   # Extract dependent variables
   Y <- as.matrix(specdata[,vars])
-  
+
   # What are the groups?
   grouping <- with(specdata, island:habitat)
   groups <- unique(grouping)
-  
-  pBartlett<- apply(Y, 2, function(curr.variable) {
-    
-    bartlett <- bartlett.test(curr.variable ~ grouping)
-    return(bartlett$p.value)
-    
+
+  bartlett.res <- apply(Y, 2, function(curr.variable) {
+
+    bartlett.res <- bartlett.test(curr.variable ~ grouping)
+
+    bartlett.res <- with(bartlett.res, c(statistic, parameter, p.value))
+
+    return(bartlett.res)
+
   })
-  
-  return(p.adjust(pBartlett, method))
-  
+
+  bartlett.res <- t(bartlett.res)
+  colnames(bartlett.res) <- c("K2", "df", "p.value")
+  bartlett.res <- as.data.frame(bartlett.res)
+  bartlett.res$padj <- p.adjust(bartlett.res$p.value, method)
+
+  return(bartlett.res)
+
 }
