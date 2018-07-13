@@ -16,22 +16,22 @@
 # Mantel allows one test for multivariate dataset
 # Moran performs several tests, one for each
 check_spatialcorr <- function(specdata, vars, plotit = T, test = "moran", method = "bonferroni") {
-  
+
   library(ape)
-  
+
   # Extract residuals
   residuals <- sapply(vars, function(curr.variable) {
-    
+
     specdata$X <- specdata[,curr.variable]
-    
+
     # Fit a linear model
     mod <- lm(X ~ island*habitat, data = specdata)
-    
+
     # Extract residuals
     residuals <- resid(mod)
-    
+
   })
-  
+
   # Plots
   if(plotit) {
     ylab <- "Residuals"
@@ -44,42 +44,43 @@ check_spatialcorr <- function(specdata, vars, plotit = T, test = "moran", method
     })
     par(mfrow = c(1,1))
   }
-  
-  
+
+
   # Distance matrix in residual space
   dR <- as.matrix(dist(residuals))
-  
+
   # Distance matrix in geography
   dG <- as.matrix(dist(specdata[,c("latitude", "longitude")]))
-  
+
   # Weigth matrix is the inverse of the distance matrix (for Moran)
   w <- 1/dG
-  
+
   # Replace infinite values (same locality) with zeros
   w[w == Inf] <- 0
-  
+
   # Perform Mantel's test...
   if(test == "mantel") {
-    
-    print("Mantel's test")
-    
+
+    print("Performing Mantel's test...")
+
     res <- ape::mantel.test(dR, dG, graph = F, alternative = "greater")
-    
+    res <- with(res, c(Z = z.stat, p.value = p))
+
   } else if(test == "moran") {
-    
+
     # Or perform (multiple) Moran's I tests
     res <- apply(residuals, 2, function(residuals) {
       ape::Moran.I(residuals, weight = w, alternative = "greater")
     })
-    
-    print("Moran's I test")
-    
+
+    message("Performing Moran's I test...")
+
     res <- as.data.frame(do.call("rbind", res))
-    
-    res$p.adj <- p.adjust(res$p.value, method)
-    
+
+    res$padj <- p.adjust(res$p.value, method)
+
   }
-  
+
   return(res)
-  
+
 }
