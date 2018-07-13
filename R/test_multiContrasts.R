@@ -103,7 +103,7 @@ test_multiContrasts <- function(W, specdata, vars, method = "bonferroni") {
   testContrasts <- as.data.frame(t(testContrasts))
 
   # Adjust p-values to correct for multiple testing
-  testContrasts$p.adj <- p.adjust(testContrasts$p.value, method = method)
+  testContrasts$padj <- p.adjust(testContrasts$p.value, method = method)
 
   # Names of the habitats in each contrast
   contrasts <- apply(W, 1, function(W) {
