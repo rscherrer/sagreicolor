@@ -16,7 +16,7 @@ check_multinorm(specdata, vars, plotit = T, method = "bonferroni")
 \item{method}{A character, the method used for P-value correction. See \code{?p.adjust}.}
 }
 \value{
-A vector of adjusted P-values for each dependent variable and each group. If \code{plotit = T}, also returns a bar plot of the adjusted P-values with a dashed line at 0.05.
+A data frame with each group, its multivariate normality W statistic, P-value and adjusted P-value.
 }
 \description{
 This function tests for multivariate normality of the data across groups (island-habitat combinations). If performs multiple Shapiro-Wilk's multivariate normality tests. P-values are adjusted to account for multiple testing.

@@ -6,46 +6,56 @@
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param plotit Logical. Whether to plot adjusted P-values.
 #' @param method A character, the method used for P-value correction. See \code{?p.adjust}.
-#' @return A vector of adjusted P-values for each dependent variable and each group. If \code{plotit = T}, also returns a bar plot of the adjusted P-values with a dashed line at 0.05.
+#' @return A data frame with each group, its multivariate normality W statistic, P-value and adjusted P-value.
 #' @author Raphael Scherrer
 #' @export
 
 
 # Function to check multivariate normality across groups
 check_multinorm <- function(specdata, vars, plotit = T, method = "bonferroni") {
-  
+
   library(mvnormtest)
-  
+
   # Extract dependent variables
   Y <- as.matrix(specdata[,vars])
-  
+
   # What are the groups?
   grouping <- with(specdata, island:habitat)
   groups <- unique(grouping)
-  
+
   # Check within-group multivariate normality assumption
-  pShapiro <- sapply(groups, function(curr.group) {
-    
+  mshapiro.res <- sapply(groups, function(curr.group) {
+
     # Take a subset of Y
     Y <- Y[groups == curr.group,]
-    
+
     # Apply normality test
-    shapiro <- mvnormtest::mshapiro.test(t(Y))
-    
+    mshapiro.res <- mvnormtest::mshapiro.test(t(Y))
+
+    mshapiro.res <- with(mshapiro.res, c(statistic, p.value))
+
     # Extract p-value
-    return(shapiro$p.value)
-    
+    return(mshapiro.res)
+
   })
-  
+
+  mshapiro.res <- t(mshapiro.res)
+  colnames(mshapiro.res) <- c("statistic", "p.value")
+  mshapiro.res <- as.data.frame(mshapiro.res)
+
   # Correct for multiple testing
-  padjShapiro <- p.adjust(pShapiro, method)
-  
+  mshapiro.res$padj <- p.adjust(mshapiro.res$p.value, method)
+
+  mshapiro.res <- cbind(groups, mshapiro.res)
+
+  colnames(mshapiro.res)[1] <- "group"
+
   # Visualize the results
   if(plotit) {
     barplot(padjShapiro, ylab = "Adjusted P-value", main = "Multivariate test of normality")
     abline(h = 0.05, lty = 2)
   }
-  
-  return(padjShapiro)
-  
+
+  return(mshapiro.res)
+
 }
