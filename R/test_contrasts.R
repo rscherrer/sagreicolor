@@ -73,7 +73,7 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
         lower = confInt$confint[,"lwr"],
         upper = confInt$confint[,"upr"],
         statistic = testContrasts$test$tstat,
-        p.adj = testContrasts$test$pvalues
+        padj = testContrasts$test$pvalues
       )
 
       # Plot 95% confidence intervals
@@ -87,7 +87,7 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
       testContrasts <- testContrasts$Analysis[,-1]
 
-      colnames(testContrasts) <- c("estimate", "lower", "upper", "statistic", "p.value")
+      colnames(testContrasts) <- c("estimate", "lower", "upper", "statistic", "padj")
 
       # Plot 95% confidence intervals
       if(plotit) plot(testContrasts)
