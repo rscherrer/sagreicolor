@@ -38,6 +38,8 @@ check_normality <- function(specdata, vars, plotit = T, method = "bonferroni") {
     colnames(shapiro.res) <- c("W", "p.value")
     shapiro.res <- as.data.frame(shapiro.res)
     shapiro.res$padj <- p.adjust(shapiro.res$p.value, method)
+    shapiro.res <- cbind(groups, shapiro.res)
+    colnames(shapiro.res)[1] <- "group"
 
     return(shapiro.res)
 
