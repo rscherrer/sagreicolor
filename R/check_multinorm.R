@@ -6,7 +6,7 @@
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param plotit Logical. Whether to plot adjusted P-values.
 #' @param method A character, the method used for P-value correction. See \code{?p.adjust}.
-#' @return A data frame with each group, its multivariate normality W statistic, P-value and adjusted P-value.
+#' @return A data frame with each group, its multivariate normality W statistic, P-value and adjusted P-value. If \code{plotit = T}, also returns a bar plot of the adjusted P-values with a dashed line at 0.05.
 #' @author Raphael Scherrer
 #' @export
 
@@ -52,7 +52,7 @@ check_multinorm <- function(specdata, vars, plotit = T, method = "bonferroni") {
 
   # Visualize the results
   if(plotit) {
-    barplot(padjShapiro, ylab = "Adjusted P-value", main = "Multivariate test of normality")
+    barplot(mshapiro.res$padj, ylab = "Adjusted P-value", main = "Multivariate test of normality")
     abline(h = 0.05, lty = 2)
   }
 
