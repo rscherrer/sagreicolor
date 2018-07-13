@@ -81,6 +81,7 @@ dewlap_gls <- function(specdata, vars, plotit = F) {
   # Plot the residuals
   if(plotit) par(mfrow = c(1,1))
 
+  names(gls.res) <- vars
 
   return(gls.res)
 
