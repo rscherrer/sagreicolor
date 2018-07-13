@@ -11,18 +11,20 @@
 
 # Function to perform non-parametric MANOVA
 dewlap_permanova <- function(specdata, vars, nperm = 999) {
-  
+
   library(vegan)
-  
+
   # Extract dependent variables
   Y <- as.matrix(specdata[,vars])
-  
+
   # Distance matrix
   D <- dist(Y)
-  
+
   # Perform (sequential) PERMANOVA
-  perm <- vegan::adonis(D ~ island*habitat, data = specdata, permutations = nperm)
-  
-  return(perm)
-  
+  permanova.res <- vegan::adonis(D ~ island*habitat, data = specdata, permutations = nperm)
+
+  permanova.res <- as.data.frame(permanova.res$aov.tab)
+
+  return(permanova.res)
+
 }
