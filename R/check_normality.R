@@ -6,7 +6,7 @@
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param plotit Logical. Whether to plot adjusted P-values.
 #' @param method A character, the method used for P-value correction. See \code{?p.adjust}.
-#' @return A vector of adjusted P-values for each dependent variable and each group. If \code{plotit = T}, also returns a bar plot of the adjusted P-values with a dashed line at 0.05.
+#' @return A list with one element per dependent variable. Each element is a data frame with Shapiro's W statistic, its P-value and adjusted P-value for each group (island-habitat combination). If \code{plotit = T}, also returns a bar plot of the adjusted P-values with a dashed line at 0.05.
 #' @author Raphael Scherrer
 #' @export
 
@@ -17,34 +17,40 @@ check_normality <- function(specdata, vars, plotit = T, method = "bonferroni") {
   grouping <- with(specdata, island:habitat)
   groups <- unique(grouping)
 
-  # Perform Shapiro test on each variable
-  shapiro.res <- apply(specdata[,vars], 2, function(x) {
+  shapiro.res <- lapply(vars, function(curr.variable) {
 
-    res <- tapply(x, grouping, function(x) {
-      res <- shapiro.test(x)
-      W <- res$statistic
-      p <- res$p.value
-      return(c(W, p))
+    shapiro.res <- sapply(groups, function(curr.group) {
+
+      specdata <- droplevels(subset(specdata, grouping == curr.group))
+
+      Y <- specdata[,curr.variable]
+
+      # Shapiro-Wilk test
+      shapiro.res <- shapiro.test(Y)
+
+      shapiro.res <- with(shapiro.res, c(statistic, p.value))
+
+      return(shapiro.res)
+
     })
-  })
 
-  # Reshape the output
-  shapiro.res <- lapply(shapiro.res, function(shapiro.res) {
-    shapiro.res <- do.call("rbind", shapiro.res)
-    colnames(shapiro.res) <- c("W", "p")
+    shapiro.res <- t(shapiro.res)
+    colnames(shapiro.res) <- c("W", "p.value")
+    shapiro.res <- as.data.frame(shapiro.res)
+    shapiro.res$padj <- p.adjust(shapiro.res$p.value, method)
+
     return(shapiro.res)
+
   })
-
-  # Extract p-values
-  shapiro.p <- do.call("c", lapply(shapiro.res, function(shapiro.res) shapiro.res[,2]))
-
-  # Compute adjusted p-values
-  shapiro.padj <- p.adjust(shapiro.p, method)
 
   # Plot
   if(plotit) {
-    barplot(shapiro.padj, main = "Normality", ylab = "Adjusted P-value", xlab = NULL)
+    barplot(do.call("c", lapply(shapiro.res, function(x) x$padj)), main = "Normality", ylab = "Adjusted P-value", xlab = NULL)
     abline(h = 0.05, lty = 2)
   }
+
+  names(shapiro.res) <- vars
+
+  return(shapiro.res)
 
 }
