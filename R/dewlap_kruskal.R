@@ -45,6 +45,8 @@ dewlap_kruskal <- function(specdata, vars, method = "bonferroni") {
 
   })
 
+  names(kruskal.res) <- vars
+
   return(kruskal.res)
 
 }
