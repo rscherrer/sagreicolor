@@ -1,6 +1,6 @@
 #' Test normality across groups
 #'
-#' This function tests for normality of the data across groups (island-habitat combinations). If performs multiple Shapiro-Wilk's normality tests. P-values are adjusted to account for multiple testing.
+#' This function tests for normality of the data across groups (island-habitat combinations). If performs multiple Shapiro-Wilk's normality tests. P-values are adjusted to account for multiple testing. blabla
 #'
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
