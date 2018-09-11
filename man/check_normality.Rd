@@ -19,7 +19,7 @@ check_normality(specdata, vars, plotit = T, method = "bonferroni")
 A list with one element per dependent variable. Each element is a data frame with Shapiro's W statistic, its P-value and adjusted P-value for each group (island-habitat combination). If \code{plotit = T}, also returns a bar plot of the adjusted P-values with a dashed line at 0.05.
 }
 \description{
-This function tests for normality of the data across groups (island-habitat combinations). If performs multiple Shapiro-Wilk's normality tests. P-values are adjusted to account for multiple testing.
+This function tests for normality of the data across groups (island-habitat combinations). If performs multiple Shapiro-Wilk's normality tests. P-values are adjusted to account for multiple testing. blabla
 }
 \author{
 Raphael Scherrer

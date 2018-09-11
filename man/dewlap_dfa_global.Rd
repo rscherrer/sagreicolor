@@ -4,7 +4,8 @@
 \alias{dewlap_dfa_global}
 \title{Global Discriminant Function Analysis (DFA) of dewlap color}
 \usage{
-dewlap_dfa_global(specdata, vars, type = "linear", plotit = T, CV = F)
+dewlap_dfa_global(specdata, vars, type = "linear", plotit = T,
+  CV = F)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
