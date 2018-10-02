@@ -36,10 +36,10 @@ check_spatialcorr <- function(specdata, vars, plotit = T, test = "moran", method
 
       # Or a generalized least square model
       # Design several variance structures first
-      mod1 <- gls(Y ~ island*habitat, data = specdata, weights = varIdent(form = ~1 | island * habitat))
-      mod2 <- gls(Y ~ island*habitat, data = specdata, weights = varIdent(form = ~1 | island))
-      mod3 <- gls(Y ~ island*habitat, data = specdata, weights = varIdent(form = ~1 | habitat))
-      mod4 <- gls(Y ~ island*habitat, data = specdata)
+      mod1 <- gls(X ~ island*habitat, data = specdata, weights = varIdent(form = ~1 | island * habitat))
+      mod2 <- gls(X ~ island*habitat, data = specdata, weights = varIdent(form = ~1 | island))
+      mod3 <- gls(X ~ island*habitat, data = specdata, weights = varIdent(form = ~1 | habitat))
+      mod4 <- gls(X ~ island*habitat, data = specdata)
 
       # AIC comparison and best model selection
       aicValues <- AIC(mod1, mod2, mod3, mod4)$AIC
