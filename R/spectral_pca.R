@@ -13,7 +13,7 @@ spectral_pca <- function(specdata) {
   isWavelength <- grep("wl", colnames(specdata))
 
   # Calculate principal components
-  dewlaPCA <- prcomp(specdata[,isWavelength], scale = T)
+  dewlaPCA <- prcomp(specdata[,isWavelength], center = T, scale = T)
 
   return(dewlaPCA)
 
