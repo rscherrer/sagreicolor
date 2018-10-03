@@ -63,7 +63,7 @@ dewlap_gls <- function(specdata, vars, plotit = F) {
     anova.res <- anova(mod.best.ml, mod.seq1, mod.seq2, mod.seq3)
 
     # Plot residuals versus fitted values
-    residuals <- resid(mod.best)
+    residuals <- resid(mod.best, type = "pearson")
     fitted <- fitted(mod.best)
     plot(residuals ~ fitted, main = curr.var)
 
