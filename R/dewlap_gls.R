@@ -4,13 +4,14 @@
 #'
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
+#' @param method A character, the method used for P-value correction. See \code{?p.adjust}.
 #' @param plotit Logical. Whether to plot the residuals of the best model or not.
 #' @return A list one element per dependent variable. Each element contains an AIC table comparing variance structures, and the ANOVA table summarizing the sequential LRTs of fixed effects. The function also plots the residuals (if \code{plotit = T}) and prints to the prompt the best model with the best variance structure.
 #' @author Raphael Scherrer
 #' @details GLS models are used to account for heteroscedasticity of the residuals across groups (Pinheiro and Bates 2000). The workflow here follows recommendations of Zuur et al. 2009.
 #' @export
 
-dewlap_gls <- function(specdata, vars, plotit = F) {
+dewlap_gls <- function(specdata, vars, method = "bonferroni", plotit = F) {
 
   library(nlme)
 
@@ -82,6 +83,22 @@ dewlap_gls <- function(specdata, vars, plotit = F) {
   if(plotit) par(mfrow = c(1,1))
 
   names(gls.res) <- vars
+
+  # Correct p-values for multiple testing
+  pvalues <- do.call("c", lapply(gls.res, function(curr.pc) {
+    curr.pc$ANOVA$`p-value`
+  }))
+
+  padj <- p.adjust(pvalues, method = "bonferroni")
+  padj <- padj[!is.na(padj)]
+
+  names(padj) <- rep(c("interaction", "habitat", "island"), length(gls.res))
+
+  i <- 1
+  for(k in seq_len(length(gls.res))) {
+    gls.res[[k]] <- c(gls.res[[k]], padj = list(padj[i:(i+2)]))
+    i <- i + 3
+  }
 
   return(gls.res)
 

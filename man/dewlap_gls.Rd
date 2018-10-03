@@ -4,12 +4,14 @@
 \alias{dewlap_gls}
 \title{Fit and analyze generalized least squares models}
 \usage{
-dewlap_gls(specdata, vars, plotit = F)
+dewlap_gls(specdata, vars, method = "bonferroni", plotit = F)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".}
 
 \item{vars}{A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.}
+
+\item{method}{A character, the method used for P-value correction. See \code{?p.adjust}.}
 
 \item{plotit}{Logical. Whether to plot the residuals of the best model or not.}
 }
