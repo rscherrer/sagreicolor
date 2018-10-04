@@ -79,7 +79,7 @@ dewlap_dfa_global <- function(specdata, vars, type = "linear", plotit = T, CV = 
   # Add MANOVA output
   out <- c(out, c(MANOVA.res$stats[1,]))
 
-  names(out) <- c("observed", "expected", "n", "p.binom", "df", "wilks", "approx.F", "num.df", "denom.df", "p.manova")
+  names(out) <- c("expected", "observed", "n", "p.binom", "df", "wilks", "approx.F", "num.df", "denom.df", "p.manova")
 
   return(out)
 

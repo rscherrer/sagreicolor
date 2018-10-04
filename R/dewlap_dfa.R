@@ -96,7 +96,7 @@ dewlap_dfa <- function(specdata, vars, type = "linear", plotit = T, CV = F, meth
   # Reorganize the result matrix
   res <- t(res)
   res <- as.data.frame(res)
-  colnames(res) <- c("observed", "expected", "n", "p.binom", "df", "wilks", "approx.F", "num.df", "denom.df", "p.manova")
+  colnames(res) <- c("expected", "observed", "n", "p.binom", "df", "wilks", "approx.F", "num.df", "denom.df", "p.manova")
 
   # Adjust p-values
   res$padj.binom <- p.adjust(res$p.binom, method = method)
