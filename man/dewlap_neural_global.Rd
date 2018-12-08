@@ -5,7 +5,7 @@
 \title{Habitat classification with neural networks}
 \usage{
 dewlap_neural_global(specdata, vars, nRepet = 1000, plot_success = T,
-  plot_importance = T, ...)
+  plot_importance = T, seed)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}

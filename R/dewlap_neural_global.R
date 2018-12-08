@@ -14,7 +14,7 @@
 #' @export
 
 # Function to train neural networks to detect differences between habitats
-dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T, plot_importance = T, ...) {
+dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T, plot_importance = T, seed) {
 
   # Load dependencies
   library(sagreicolor)
@@ -27,7 +27,7 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
 
   loadfonts()
 
-  if(exists("seed")) set.seed(seed)
+  if(!missing("seed")) set.seed(seed)
 
   nhabitats <- nlevels(specdata$habitat)
 
