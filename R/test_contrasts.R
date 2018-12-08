@@ -6,16 +6,9 @@
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param parametric Logical. If \code{TRUE} (default), parametric multiple comparisons are performed, otherwise a non-parametric procedure is used.
-#' @param plotit Logical. If \code{TRUE}, plots 95% confidence intervals of the contrasts. One plot per dependent variable.
+#' @param plotit Logical. If \code{TRUE}, plots 95\% confidence intervals of the contrasts. One plot per dependent variable.
 #' @param method Correction method for adjusting p-values (parametric procedure).
 #' @return A list with one element for each dependent variable in \code{vars}. Each element is a data frame with columns:
-#' \itemize{
-#' \item{\code{hab1, hab2} The habitats being compared.}
-#' \item{\code{estimate} The estimated contrast between means.}
-#' \item{\code{lower, upper} The lower and upper bounds of the adjusted 95% confidence interval.}
-#' \item{\code{statistic} Statistic used for computing P-values. If \code{parametric = TRUE}, t-statistic, if \code{parametric = FALSE}, the multivariate Satterthwaite t-approximation is used.}
-#' \item{\code{p.adj} Simultaneous P-values adjusted (by \code{method} if parametric, and \code{"bonferroni"} by default if non-parametric).}
-#' }
 #' @author Raphael Scherrer
 #' @note Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp. Note also that performing multiple comparisons one dependent variable at a time is not so bad if variables have limited correlation, as in the case of principal components (Krishnaiah and Reising 2006).
 #' @export

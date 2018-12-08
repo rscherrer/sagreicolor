@@ -16,9 +16,12 @@ test_contrasts(W, specdata, vars, parametric = T, plotit = T,
 
 \item{parametric}{Logical. If \code{TRUE} (default), parametric multiple comparisons are performed, otherwise a non-parametric procedure is used.}
 
-\item{plotit}{Logical. If \code{TRUE}, plots 95% confidence intervals of the contrasts. One plot per dependent variable.}
+\item{plotit}{Logical. If \code{TRUE}, plots 95\% confidence intervals of the contrasts. One plot per dependent variable.}
 
 \item{method}{Correction method for adjusting p-values (parametric procedure).}
+}
+\value{
+A list with one element for each dependent variable in \code{vars}. Each element is a data frame with columns:
 }
 \description{
 This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95% confidence intervals of the differences in means.

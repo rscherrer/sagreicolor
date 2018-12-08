@@ -1,12 +1,12 @@
 #' Habitat classification with neural networks
 #'
-#' This function trains neural networks to recognize differences between habitats. Each neural network is trained on a random sample of half of the data, and tested against the other half. The success of the classification is compared to a null expectation generated from a permuted dataset where no differences exist between habitats. The 5% best performing machines are studied more in depth to identify what were the most important variables in discriminating between habitats.
+#' This function trains neural networks to recognize differences between habitats. Each neural network is trained on a random sample of half of the data, and tested against the other half. The success of the classification is compared to a null expectation generated from a permuted dataset where no differences exist between habitats. The 5\% best performing machines are studied more in depth to identify what were the most important variables in discriminating between habitats.
 #'
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param nRepet The number of neural networks to train (same number for empirical and permuted datasets).
 #' @param plot_success Whether to plot histograms of the success of the machines on the empirical data compared to the null distribution.
-#' @param plot_importance Whether to plot the importance of each variable in discriminating among habitats, according to the top 5% machines.
+#' @param plot_importance Whether to plot the importance of each variable in discriminating among habitats, according to the top 5\% machines.
 #' @param seed Seed for random number gnerators
 #' @return Just plots.
 #' @note If \code{plot_importance = T} and reflectances at certain wavelengths are present in the variables (their name start with "wl" in specdata) then a first linear plot is drawn along the light spectrum, then a barplot is generated with the remaining variables.

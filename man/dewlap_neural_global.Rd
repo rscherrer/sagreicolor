@@ -5,7 +5,7 @@
 \title{Habitat classification with neural networks}
 \usage{
 dewlap_neural_global(specdata, vars, nRepet = 1000, plot_success = T,
-  seed, plot_importance = T)
+  plot_importance = T, seed)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -16,15 +16,15 @@ dewlap_neural_global(specdata, vars, nRepet = 1000, plot_success = T,
 
 \item{plot_success}{Whether to plot histograms of the success of the machines on the empirical data compared to the null distribution.}
 
-\item{seed}{Seed for random number gnerators}
+\item{plot_importance}{Whether to plot the importance of each variable in discriminating among habitats, according to the top 5\% machines.}
 
-\item{plot_importance}{Whether to plot the importance of each variable in discriminating among habitats, according to the top 5% machines.}
+\item{seed}{Seed for random number gnerators}
 }
 \value{
 Just plots.
 }
 \description{
-This function trains neural networks to recognize differences between habitats. Each neural network is trained on a random sample of half of the data, and tested against the other half. The success of the classification is compared to a null expectation generated from a permuted dataset where no differences exist between habitats. The 5% best performing machines are studied more in depth to identify what were the most important variables in discriminating between habitats.
+This function trains neural networks to recognize differences between habitats. Each neural network is trained on a random sample of half of the data, and tested against the other half. The success of the classification is compared to a null expectation generated from a permuted dataset where no differences exist between habitats. The 5\% best performing machines are studied more in depth to identify what were the most important variables in discriminating between habitats.
 }
 \note{
 If \code{plot_importance = T} and reflectances at certain wavelengths are present in the variables (their name start with "wl" in specdata) then a first linear plot is drawn along the light spectrum, then a barplot is generated with the remaining variables.

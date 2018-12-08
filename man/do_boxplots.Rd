@@ -14,25 +14,13 @@ do_boxplots(specdata, var, filename = NULL, isJitter = F, ...)
 \item{filename}{A string. Name of the PDF file in which to save the plot. Does not save PDF if not specified. Can also be a path to the file to be created. Don't forget to add ".pdf" at the end!}
 
 \item{isJitter}{Logical. Whether to plot jittered points instead of boxplots. Good way to view outliers.}
-
-\item{specdata}{A data frame containing the variable to plot. It should have a column "island" and a column "habitat".}
-
-\item{var}{The name of the variable to plot, as it appears in \code{colnames(specdata)}.}
-
-\item{filename}{A string. Name of the PDF file in which to save the plot. Does not save PDF if not specified. Can also be a path to the file to be created. Don't forget to add ".pdf" at the end!}
-
-\item{isJitter}{Logical. Whether to plot jittered points instead of boxplots. Good way to view outliers.}
 }
 \value{
-A plot.
-
 A plot.
 }
 \description{
 This function makes a boxplot of a given color metric across all islands and all habitats. It can save the plot as a PDF file.
 }
 \author{
-Raphael Scherrer
-
 Raphael Scherrer
 }
