@@ -165,7 +165,9 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
       imp <- importanceTable[wl_id]
       wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
       imp_along_spectrum <- cbind(wls, imp)
+      pdf("plots/importance_along_spectrum.pdf", width = 5, height = 4, family = "Garamond")
       plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
+      dev.off()
 
       importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
 
@@ -175,7 +177,9 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
     names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
 
     # Then plot the rest of the variables
+    pdf("plots/importance.pdf", width = 3, height = 4, family = "Garamond")
     barplot(importanceTable, las = 1, ylab = "Importance")
+    dev.off()
 
   }
 
