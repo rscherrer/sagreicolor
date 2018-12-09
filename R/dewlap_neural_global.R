@@ -36,7 +36,7 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
     return(sample(nrow(specdata), replace = F))
   })
 
-  message("Training on permuted data...")
+  message(paste("Training", nRepet, "networks on permuted data..."))
 
   # Train neural networks on permuted data
   permuted.res <- pblapply(ii, function(ii) {
@@ -77,113 +77,113 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
 
   permuted.res <- do.call("rbind", permuted.res)
 
-  message("Training on empirical data...")
+  message(paste("Training", nRepet, "networks on empirical data...")
 
-  d <- data.frame(specdata[,c(vars, "habitat")])
+          d <- data.frame(specdata[,c(vars, "habitat")])
 
-  empir <- pblapply(seq_len(nRepet), function(i) {
+          empir <- pblapply(seq_len(nRepet), function(i) {
 
-    # Create training and test sets
-    inTraining <- createDataPartition(d$habitat, p=0.5, list=F)
-    training <- d[inTraining,]
-    testing <- d[-inTraining,]
+            # Create training and test sets
+            inTraining <- createDataPartition(d$habitat, p=0.5, list=F)
+            training <- d[inTraining,]
+            testing <- d[-inTraining,]
 
-    # Balance training set so there are same numbers of each class
-    training <- DescTools::Strata(training, stratanames = "habitat", size = rep(min(table(training$habitat)),length(unique(training$habitat))))
-    drop <- c("stratum","size","id")
-    training <- training[,-which(colnames(training) %in% drop)]
+            # Balance training set so there are same numbers of each class
+            training <- DescTools::Strata(training, stratanames = "habitat", size = rep(min(table(training$habitat)),length(unique(training$habitat))))
+            drop <- c("stratum","size","id")
+            training <- training[,-which(colnames(training) %in% drop)]
 
-    # Fit the machine
-    svm.model <- fit(habitat~., data=training, model="svm", kernel = "rbfdot", task="class")
-    svm.pred <- predict(svm.model, testing[,-which(colnames(testing)=="habitat")])
+            # Fit the machine
+            svm.model <- fit(habitat~., data=training, model="svm", kernel = "rbfdot", task="class")
+            svm.pred <- predict(svm.model, testing[,-which(colnames(testing)=="habitat")])
 
-    # Confusion matrix
-    tab <- table(svm.pred, true=testing$habitat)
+            # Confusion matrix
+            tab <- table(svm.pred, true=testing$habitat)
 
-    # Assess performance
-    nSuccess <- sum(diag(tab))
-    nTotal <- sum(tab)
-    propSuccess <- nSuccess / nTotal
+            # Assess performance
+            nSuccess <- sum(diag(tab))
+            nTotal <- sum(tab)
+            propSuccess <- nSuccess / nTotal
 
-    p.binom <- binom.test(nSuccess, nTotal, p = 1/nhabitats)$p.value
+            p.binom <- binom.test(nSuccess, nTotal, p = 1/nhabitats)$p.value
 
-    out <- list(training = training, confutab = tab, machine = svm.model, success = c(propSuccess, p.binom))
+            out <- list(training = training, confutab = tab, machine = svm.model, success = c(propSuccess, p.binom))
 
-    # (Save training datasets for importance sampling)
+            # (Save training datasets for importance sampling)
 
-    return(out)
+            return(out)
 
-  })
+          })
 
-  empirical.res <- lapply(empir, function(curr.machine) curr.machine$success)
-  empirical.res <- as.matrix(do.call("rbind", empirical.res))
+          empirical.res <- lapply(empir, function(curr.machine) curr.machine$success)
+          empirical.res <- as.matrix(do.call("rbind", empirical.res))
 
-  labels <- factor(c(rep("Randomizations", nrow(permuted.res)), rep("Empirical", nrow(empirical.res))))
-  results <- cbind(as.data.frame(rbind(permuted.res, empirical.res)), labels)
-  colnames(results) <- c("propSuccess","p.value", "label")
+          labels <- factor(c(rep("Randomizations", nrow(permuted.res)), rep("Empirical", nrow(empirical.res))))
+          results <- cbind(as.data.frame(rbind(permuted.res, empirical.res)), labels)
+          colnames(results) <- c("propSuccess","p.value", "label")
 
-  # Plot success and random expectation
-  if(plot_success) {
+          # Plot success and random expectation
+          if(plot_success) {
 
-    p1 <- ggplot(results, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
+            p1 <- ggplot(results, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
 
-    p2 <- ggplot(results, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
+            p2 <- ggplot(results, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
 
-    if(save_plot) ggsave("plots/success_neural_network.pdf", p1, device = "pdf", width = 4, height = 2.5, family = "Garamond") else print(p1)
+            if(save_plot) ggsave("plots/success_neural_network.pdf", p1, device = "pdf", width = 4, height = 2.5, family = "Garamond") else print(p1)
 
-    if(save_plot) ggsave("plots/pvalues_neural_network.pdf", p2, device = "pdf", width = 4, height = 2.5, family = "Garamond") else print(p2)
+            if(save_plot) ggsave("plots/pvalues_neural_network.pdf", p2, device = "pdf", width = 4, height = 2.5, family = "Garamond") else print(p2)
 
-  }
+          }
 
-  message("Identifying key discriminating variables...")
+          message("Identifying key discriminating variables...")
 
-  # Identify the best machines
-  quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
-  idBestReps <- empirical.res[,1] > quant95
+          # Identify the best machines
+          quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
+          idBestReps <- empirical.res[,1] > quant95
 
-  # Subset machines, confusion matrices, and training sets to top 5%
-  machines <- lapply(empir, function(curr.machine) curr.machine$machine)
-  bestMachines <- machines[which(idBestReps)]
-  tabs <- lapply(empir, function(curr.machine) curr.machine$confutab)
-  bestTabs <- tabs[which(idBestReps)]
-  trainings <- lapply(empir, function(curr.machine) curr.machine$training)
-  bestTrainings <- trainings[which(idBestReps)]
+          # Subset machines, confusion matrices, and training sets to top 5%
+          machines <- lapply(empir, function(curr.machine) curr.machine$machine)
+          bestMachines <- machines[which(idBestReps)]
+          tabs <- lapply(empir, function(curr.machine) curr.machine$confutab)
+          bestTabs <- tabs[which(idBestReps)]
+          trainings <- lapply(empir, function(curr.machine) curr.machine$training)
+          bestTrainings <- trainings[which(idBestReps)]
 
-  # Get Feature Importance for top 5% machines
-  bestFeatures <- pbmapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
+          # Get Feature Importance for top 5% machines
+          bestFeatures <- pbmapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
 
-  # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
-  importanceTable <- rowSums(sapply(bestFeatures,"[[","imp"))
-  names(importanceTable) <- colnames(trainings[[1]])
-  importanceTable <- importanceTable[-1] # first value is habitat
+          # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
+          importanceTable <- rowSums(sapply(bestFeatures,"[[","imp"))
+          names(importanceTable) <- colnames(trainings[[1]])
+          importanceTable <- importanceTable[-1] # first value is habitat
 
-  if(plot_importance) {
+          if(plot_importance) {
 
-    # First plot along the spectrum of wavelengths
-    if(length(grep("wl", names(importanceTable))) != 0) {
+            # First plot along the spectrum of wavelengths
+            if(length(grep("wl", names(importanceTable))) != 0) {
 
-      wl_id <- grep("wl", names(importanceTable))
-      imp <- importanceTable[wl_id]
-      wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
-      imp_along_spectrum <- cbind(wls, imp)
-      if(save_plot) pdf("plots/importance_along_spectrum.pdf", width = 5, height = 4, family = "Garamond")
-      plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
-      if(save_plot) dev.off()
+              wl_id <- grep("wl", names(importanceTable))
+              imp <- importanceTable[wl_id]
+              wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
+              imp_along_spectrum <- cbind(wls, imp)
+              if(save_plot) pdf("plots/importance_along_spectrum.pdf", width = 5, height = 4, family = "Garamond")
+              plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
+              if(save_plot) dev.off()
 
-      importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
+              importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
 
-    }
+            }
 
-    names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
-    names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
+            names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
+            names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
 
-    # Then plot the rest of the variables
-    if(save_plot) pdf("plots/importance.pdf", width = 3, height = 4, family = "Garamond")
-    barplot(importanceTable, las = 1, ylab = "Importance")
-    if(save_plot) dev.off()
+            # Then plot the rest of the variables
+            if(save_plot) pdf("plots/importance.pdf", width = 3, height = 4, family = "Garamond")
+            barplot(importanceTable, las = 1, ylab = "Importance")
+            if(save_plot) dev.off()
 
-  }
+          }
 
-  message("Done.")
+          message("Done.")
 
 }
