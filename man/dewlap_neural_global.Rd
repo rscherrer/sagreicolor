@@ -5,7 +5,7 @@
 \title{Habitat classification with neural networks}
 \usage{
 dewlap_neural_global(specdata, vars, nRepet = 1000, plot_success = T,
-  plot_importance = T, seed)
+  plot_importance = T, save_plot = T, seed)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -17,6 +17,8 @@ dewlap_neural_global(specdata, vars, nRepet = 1000, plot_success = T,
 \item{plot_success}{Whether to plot histograms of the success of the machines on the empirical data compared to the null distribution.}
 
 \item{plot_importance}{Whether to plot the importance of each variable in discriminating among habitats, according to the top 5\% machines.}
+
+\item{save_plot}{Whether to save plots as pdfs to the plot/ folder or, if false, to display them in R.}
 
 \item{seed}{Seed for random number gnerators}
 }

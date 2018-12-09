@@ -7,6 +7,7 @@
 #' @param nRepet The number of neural networks to train (same number for empirical and permuted datasets).
 #' @param plot_success Whether to plot histograms of the success of the machines on the empirical data compared to the null distribution.
 #' @param plot_importance Whether to plot the importance of each variable in discriminating among habitats, according to the top 5\% machines.
+#' @param save_plot Whether to save plots as pdfs to the plot/ folder or, if false, to display them in R.
 #' @param seed Seed for random number gnerators
 #' @return Just plots.
 #' @note If \code{plot_importance = T} and reflectances at certain wavelengths are present in the variables (their name start with "wl" in specdata) then a first linear plot is drawn along the light spectrum, then a barplot is generated with the remaining variables.
@@ -14,7 +15,7 @@
 #' @export
 
 # Function to train neural networks to detect differences between habitats
-dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T, plot_importance = T, seed) {
+dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T, plot_importance = T, save_plot = T, seed) {
 
   # Load dependencies
   library(sagreicolor)
@@ -128,9 +129,9 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
 
     p2 <- ggplot(results, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
 
-    ggsave("plots/success_neural_network.pdf", p1, device = "pdf", width = 4, height = 2.5, family = "Garamond")
+    if(save_plot) ggsave("plots/success_neural_network.pdf", p1, device = "pdf", width = 4, height = 2.5, family = "Garamond") else print(p1)
 
-    ggsave("plots/pvalues_neural_network.pdf", p2, device = "pdf", width = 4, height = 2.5, family = "Garamond")
+    if(save_plot) ggsave("plots/pvalues_neural_network.pdf", p2, device = "pdf", width = 4, height = 2.5, family = "Garamond") else print(p2)
 
   }
 
@@ -165,9 +166,9 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
       imp <- importanceTable[wl_id]
       wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
       imp_along_spectrum <- cbind(wls, imp)
-      pdf("plots/importance_along_spectrum.pdf", width = 5, height = 4, family = "Garamond")
+      if(save_plot) pdf("plots/importance_along_spectrum.pdf", width = 5, height = 4, family = "Garamond")
       plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
-      dev.off()
+      if(save_plot) dev.off()
 
       importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
 
@@ -177,9 +178,9 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
     names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
 
     # Then plot the rest of the variables
-    pdf("plots/importance.pdf", width = 3, height = 4, family = "Garamond")
+    if(save_plot) pdf("plots/importance.pdf", width = 3, height = 4, family = "Garamond")
     barplot(importanceTable, las = 1, ylab = "Importance")
-    dev.off()
+    if(save_plot) dev.off()
 
   }
 
