@@ -20,12 +20,11 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
   library(sagreicolor)
   library(DescTools)
   library(caret)
-  library(pbapply)
+  library(pbapply) # needs to be github version psolymos/pbapply, pbmapply absent from Cran version
   library(rminer)
-  library(pbapply)
   library(extrafont)
 
-  loadfonts()
+  loadfonts(quiet = T)
 
   if(!missing("seed")) set.seed(seed)
 
@@ -135,7 +134,7 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
 
   }
 
-  message("Evaluating the 5% best machines...")
+  message("Identifying key discriminating variables...")
 
   # Identify the best machines
   quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
@@ -150,7 +149,7 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
   bestTrainings <- trainings[which(idBestReps)]
 
   # Get Feature Importance for top 5% machines
-  bestFeatures <- mapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
+  bestFeatures <- pbmapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
 
   # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
   importanceTable <- rowSums(sapply(bestFeatures,"[[","imp"))
@@ -164,18 +163,22 @@ dewlap_neural_global <- function(specdata, vars, nRepet = 1000, plot_success = T
 
       wl_id <- grep("wl", names(importanceTable))
       imp <- importanceTable[wl_id]
-      wls <-  as.numeric(gsub("wl", "", names(importanceTable)))
-      imp_along_spectrum <- cbind(imp, wls)
-      plot(importance, ylab="Importance",xlab="Wavelength", type="l")
+      wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
+      imp_along_spectrum <- cbind(wls, imp)
+      plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
 
       importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
 
     }
 
+    names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
+    names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
+
     # Then plot the rest of the variables
-    barplot(importanceTable)
+    barplot(importanceTable, las = 1, ylab = "Importance")
 
   }
 
+  message("Done.")
 
 }
