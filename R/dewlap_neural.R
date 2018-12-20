@@ -35,7 +35,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, plot_success = T, plot_
                 "pvalues_neural_network.pdf",
                 "importance_along_spectrum.pdf",
                 "importance.pdf")
-  pdfnames <- paste(saveto, pdfnames, sep = '/')
+  if(!missing(saveto)) pdfnames <- paste(saveto, pdfnames, sep = '/')
 
   nhabitats <- nlevels(specdata$habitat)
 
