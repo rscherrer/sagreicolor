@@ -4,7 +4,7 @@
 \alias{dewlap_neural_nested}
 \title{Habitat classification with neural networks per island}
 \usage{
-dewlap_neural_nested(specdata, vars, nRepet = 1000, saveto, seed)
+dewlap_neural_nested(specdata, vars, nRepet = 1000, saveto, seed, font)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -16,6 +16,8 @@ dewlap_neural_nested(specdata, vars, nRepet = 1000, saveto, seed)
 \item{saveto}{Path to the folder where to save the PDFs. One folder will be created for each island.}
 
 \item{seed}{Seed for random number generators}
+
+\item{font}{Font to be used in the plots. Defaults to Helvetica.}
 }
 \value{
 Just plots.

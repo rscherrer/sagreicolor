@@ -7,12 +7,13 @@
 #' @param nRepet The number of neural networks to train (same number for empirical and permuted datasets).
 #' @param saveto Path to the folder where to save the PDFs. One folder will be created for each island.
 #' @param seed Seed for random number generators
+#' @param font Font to be used in the plots. Defaults to Helvetica.
 #' @return Just plots.
 #' @author Raphael Scherrer
 #' @export
 
 # This function applies the neural network analysis on each island separately
-dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, saveto, seed) {
+dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
 
   if(!missing("seed")) set.seed(seed)
 
@@ -31,8 +32,10 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, saveto, seed) {
 
     dir.create(folder.name)
 
+    if(missing(font)) font <- "Helvetica"
+
     # Apply neural networks
-    neural.res <- dewlap_neural(curr.specdata, vars, nRepet, plot_success, plot_importance, saveto = folder.name)
+    neural.res <- dewlap_neural(curr.specdata, vars, nRepet, saveto = folder.name, font = font)
 
   }
 
