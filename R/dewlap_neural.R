@@ -9,7 +9,6 @@
 #' @param seed Seed for random number gnerators
 #' @param font Font to be used in the plots. Defaults to Helvetica.
 #' @return Just plots.
-#' @note If \code{plot_importance = T} and reflectances at certain wavelengths are present in the variables (their name start with "wl" in specdata) then a first linear plot is drawn along the light spectrum, then a barplot is generated with the remaining variables.
 #' @author Raphael Scherrer
 #' @export
 
@@ -129,17 +128,14 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   colnames(results) <- c("propSuccess","p.value", "label")
 
   # Plot success and random expectation
-  if(plot_success) {
 
-    p1 <- ggplot(results, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
+  p1 <- ggplot(results, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
 
-    p2 <- ggplot(results, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
+  p2 <- ggplot(results, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
 
-    if(!missing(saveto)) ggsave(pdfnames[1], p1, device = "pdf", width = 4, height = 2.5, family = font) else print(p1)
+  if(!missing(saveto)) ggsave(pdfnames[1], p1, device = "pdf", width = 4, height = 2.5, family = font) else print(p1)
 
-    if(!missing(saveto)) ggsave(pdfnames[2], p2, device = "pdf", width = 4, height = 2.5, family = font) else print(p2)
-
-  }
+  if(!missing(saveto)) ggsave(pdfnames[2], p2, device = "pdf", width = 4, height = 2.5, family = font) else print(p2)
 
   message("Identifying key discriminating variables...")
 
@@ -163,32 +159,28 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   names(importanceTable) <- colnames(trainings[[1]])
   importanceTable <- importanceTable[-1] # first value is habitat
 
-  if(plot_importance) {
+  # First plot along the spectrum of wavelengths
+  if(length(grep("wl", names(importanceTable))) != 0) {
 
-    # First plot along the spectrum of wavelengths
-    if(length(grep("wl", names(importanceTable))) != 0) {
-
-      wl_id <- grep("wl", names(importanceTable))
-      imp <- importanceTable[wl_id]
-      wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
-      imp_along_spectrum <- cbind(wls, imp)
-      if(!missing(saveto)) pdf(pdfnames[3], width = 5, height = 4, family = font)
-      plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
-      if(!missing(saveto)) dev.off()
-
-      importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
-
-    }
-
-    names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
-    names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
-
-    # Then plot the rest of the variables
-    if(!missing(saveto)) pdf(pdfnames[4], width = 3, height = 4, family = font)
-    barplot(importanceTable, las = 1, ylab = "Importance")
+    wl_id <- grep("wl", names(importanceTable))
+    imp <- importanceTable[wl_id]
+    wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
+    imp_along_spectrum <- cbind(wls, imp)
+    if(!missing(saveto)) pdf(pdfnames[3], width = 5, height = 4, family = font)
+    plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
     if(!missing(saveto)) dev.off()
 
+    importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
+
   }
+
+  names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
+  names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
+
+  # Then plot the rest of the variables
+  if(!missing(saveto)) pdf(pdfnames[4], width = 3, height = 4, family = font)
+  barplot(importanceTable, las = 1, ylab = "Importance")
+  if(!missing(saveto)) dev.off()
 
   message("Done.")
 
