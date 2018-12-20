@@ -19,7 +19,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   library(sagreicolor)
   library(DescTools)
   library(caret)
-  library(pbapply) # needs to be github version psolymos/pbapply, pbmapply absent from Cran version
+  library(pbapply)
   library(rminer)
   if(!missing(font)) {
     library(extrafont)
@@ -137,7 +137,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
 
   if(!missing(saveto)) ggsave(pdfnames[2], p2, device = "pdf", width = 4, height = 2.5, family = font) else print(p2)
 
-  message("Identifying key discriminating variables...")
+  message("Identifying key discriminating variables (takes a little while, no progress bar available atm)...")
 
   # Identify the best machines
   quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
@@ -152,7 +152,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   bestTrainings <- trainings[which(idBestReps)]
 
   # Get Feature Importance for top 5% machines
-  bestFeatures <- pbmapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
+  bestFeatures <- mapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
 
   # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
   importanceTable <- rowSums(sapply(bestFeatures,"[[","imp"))
