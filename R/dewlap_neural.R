@@ -155,7 +155,8 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   bestFeatures <- mapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
 
   # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
-  importanceTable <- rowSums(sapply(bestFeatures,"[[","imp",simplify = F))
+  importanceTable <- sapply(bestFeatures,"[[","imp")
+  if(ncol(cbind(importanceTable)) > 1) importanceTable <- rowSums(importanceTable) else importanceTable <- c(importanceTable)
   names(importanceTable) <- colnames(trainings[[1]])
   importanceTable <- importanceTable[-1] # first value is habitat
 
