@@ -4,8 +4,7 @@
 \alias{dewlap_neural_nested}
 \title{Habitat classification with neural networks per island}
 \usage{
-dewlap_neural_nested(specdata, vars, nRepet = 1000, plot_success = T,
-  plot_importance = T, save_plot = T, seed)
+dewlap_neural_nested(specdata, vars, nRepet = 1000, saveto, seed)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -14,22 +13,15 @@ dewlap_neural_nested(specdata, vars, nRepet = 1000, plot_success = T,
 
 \item{nRepet}{The number of neural networks to train (same number for empirical and permuted datasets).}
 
-\item{plot_success}{Whether to plot histograms of the success of the machines on the empirical data compared to the null distribution.}
+\item{saveto}{Path to the folder where to save the PDFs. One folder will be created for each island.}
 
-\item{plot_importance}{Whether to plot the importance of each variable in discriminating among habitats, according to the top 5\% machines.}
-
-\item{save_plot}{Whether to save plots as pdfs to the plot/ folder or, if false, to display them in R.}
-
-\item{seed}{Seed for random number gnerators}
+\item{seed}{Seed for random number generators}
 }
 \value{
 Just plots.
 }
 \description{
 This function applies the neural network analysis on each island separately
-}
-\note{
-If \code{plot_importance = T} and reflectances at certain wavelengths are present in the variables (their name start with "wl" in specdata) then a first linear plot is drawn along the light spectrum, then a barplot is generated with the remaining variables.
 }
 \author{
 Raphael Scherrer
