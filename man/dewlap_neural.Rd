@@ -4,8 +4,7 @@
 \alias{dewlap_neural}
 \title{Habitat classification with neural networks}
 \usage{
-dewlap_neural(specdata, vars, nRepet = 1000, plot_success = T,
-  plot_importance = T, save_plot = T, saveto, seed, font)
+dewlap_neural(specdata, vars, nRepet = 1000, saveto, seed, font)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -13,10 +12,6 @@ dewlap_neural(specdata, vars, nRepet = 1000, plot_success = T,
 \item{vars}{A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.}
 
 \item{nRepet}{The number of neural networks to train (same number for empirical and permuted datasets).}
-
-\item{plot_success}{Whether to plot histograms of the success of the machines on the empirical data compared to the null distribution.}
-
-\item{plot_importance}{Whether to plot the importance of each variable in discriminating among habitats, according to the top 5\% machines.}
 
 \item{saveto}{Where to save the PDFs. No PDF is saved if missing, plots will be returned in the R console.}
 
