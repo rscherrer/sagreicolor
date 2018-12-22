@@ -151,7 +151,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   bestTrainings <- trainings[which(idBestReps)]
 
   # Get Feature Importance for top 5% machines
-  bestFeatures <- mapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
+  bestFeatures <- pbmapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
 
   # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
   importanceTable <- sapply(bestFeatures,"[[","imp")
