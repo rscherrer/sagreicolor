@@ -136,7 +136,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
 
   if(!missing(saveto)) ggsave(pdfnames[2], p2, device = "pdf", width = 4, height = 2.5, family = font) else print(p2)
 
-  message("Identifying key discriminating variables (takes a little while, no progress bar available atm)...")
+  message("Identifying key discriminating variables...")
 
   # Identify the best machines
   quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
