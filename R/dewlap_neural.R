@@ -16,7 +16,6 @@
 dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
 
   # Load dependencies
-  library(sagreicolor)
   library(DescTools)
   library(caret)
   library(pbapply)
@@ -141,7 +140,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
 
   # Identify the best machines
   quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
-  idBestReps <- empirical.res[,1] > quant95
+  idBestReps <- empirical.res[,1] >= quant95
 
   # Subset machines, confusion matrices, and training sets to top 5%
   machines <- lapply(empir, function(curr.machine) curr.machine$machine)
@@ -157,9 +156,6 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
   importanceTable <- sapply(bestFeatures,"[[","imp")
   if(ncol(cbind(importanceTable)) > 1) importanceTable <- rowSums(importanceTable) else importanceTable <- c(importanceTable)
-  ncol(cbind(importanceTable)) > 1
-  print(length(importanceTable))
-  print(length(colnames(trainings[[1]])))
   names(importanceTable) <- colnames(trainings[[1]])
   importanceTable <- importanceTable[-1] # first value is habitat
 
