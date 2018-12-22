@@ -159,6 +159,10 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   names(importanceTable) <- colnames(trainings[[1]])
   importanceTable <- importanceTable[-1] # first value is habitat
 
+  # Output
+  out <- list(results, importanceTable)
+  names(out) <- c("Results", "Importance")
+
   # First plot along the spectrum of wavelengths
   if(length(grep("wl", names(importanceTable))) != 0) {
 
@@ -183,5 +187,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   if(!missing(saveto)) dev.off()
 
   message("Done.")
+
+  return(out)
 
 }
