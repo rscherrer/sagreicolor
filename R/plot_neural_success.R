@@ -11,6 +11,7 @@
 # Function to plot the results of a neural network classification analysis
 plot_neural_success <- function(X, saveto, font) {
 
+  library(ggplot2)
   library(extrafont)
   loadfonts(quiet = T)
   if(missing(font)) font <- "Helvetica"
