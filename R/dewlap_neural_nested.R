@@ -19,6 +19,8 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, saveto, seed, fo
 
   nislands <- nlevels(specdata$island)
 
+  out <- list()
+
   # Loop through islands
   for(i in seq_len(nislands)) {
 
@@ -35,8 +37,11 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, saveto, seed, fo
     if(missing(font)) font <- "Helvetica"
 
     # Apply neural networks
-    neural.res <- dewlap_neural(curr.specdata, vars, nRepet, saveto = folder.name, font = font)
+    out[[i]] <- dewlap_neural(curr.specdata, vars, nRepet, saveto = folder.name, font = font)
 
   }
+
+  names(out) <- levels(specdata$island)
+  return(out)
 
 }
