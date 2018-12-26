@@ -24,6 +24,7 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed) {
 
     message(paste0("Island ", i, "/", nislands, ":"))
 
+    curr.island <- levels(specdata$island)[i]
     curr.specdata <- droplevels(specdata[specdata$island == curr.island,])
 
     # Apply neural networks
