@@ -4,7 +4,7 @@
 \alias{dewlap_neural}
 \title{Habitat classification with neural networks}
 \usage{
-dewlap_neural(specdata, vars, nRepet = 1000, saveto, seed, font)
+dewlap_neural(specdata, vars, nRepet = 1000, seed)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -13,14 +13,10 @@ dewlap_neural(specdata, vars, nRepet = 1000, saveto, seed, font)
 
 \item{nRepet}{The number of neural networks to train (same number for empirical and permuted datasets).}
 
-\item{saveto}{Where to save the PDFs. No PDF is saved if missing, plots will be returned in the R console.}
-
 \item{seed}{Seed for random number gnerators}
-
-\item{font}{Font to be used in the plots. Defaults to Helvetica.}
 }
 \value{
-Just plots.
+A list of two data frames: one contains success and p-values for randomized and empirical data, the other contains the importance variables in the 5\% best classifiers.
 }
 \description{
 This function trains neural networks to recognize differences between habitats. Each neural network is trained on a random sample of half of the data, and tested against the other half. The success of the classification is compared to a null expectation generated from a permuted dataset where no differences exist between habitats. The 5\% best performing machines are studied more in depth to identify what were the most important variables in discriminating between habitats.
