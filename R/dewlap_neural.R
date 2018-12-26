@@ -5,33 +5,21 @@
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "habitat".
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param nRepet The number of neural networks to train (same number for empirical and permuted datasets).
-#' @param saveto Where to save the PDFs. No PDF is saved if missing, plots will be returned in the R console.
 #' @param seed Seed for random number gnerators
-#' @param font Font to be used in the plots. Defaults to Helvetica.
-#' @return Just plots.
+#' @return A list of two data frames: one contains success and p-values for randomized and empirical data, the other contains the importance variables in the 5\% best classifiers.
 #' @author Raphael Scherrer
 #' @export
 
 # Function to train neural networks to detect differences between habitats
-dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
+dewlap_neural <- function(specdata, vars, nRepet = 1000, seed) {
 
   # Load dependencies
   library(DescTools)
   library(caret)
   library(pbapply)
   library(rminer)
-  if(!missing(font)) {
-    library(extrafont)
-    loadfonts(quiet = T)
-  } else font <- "Helvetica"
-
 
   if(!missing("seed")) set.seed(seed)
-  pdfnames <- c("success_neural_network.pdf",
-                "pvalues_neural_network.pdf",
-                "importance_along_spectrum.pdf",
-                "importance.pdf")
-  if(!missing(saveto)) pdfnames <- paste(saveto, pdfnames, sep = '/')
 
   nhabitats <- nlevels(specdata$habitat)
 
@@ -126,16 +114,6 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   results <- cbind(as.data.frame(rbind(permuted.res, empirical.res)), labels)
   colnames(results) <- c("propSuccess","p.value", "label")
 
-  # Plot success and random expectation
-
-  p1 <- ggplot(results, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
-
-  p2 <- ggplot(results, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
-
-  if(!missing(saveto)) ggsave(pdfnames[1], p1, device = "pdf", width = 4, height = 2.5, family = font) else print(p1)
-
-  if(!missing(saveto)) ggsave(pdfnames[2], p2, device = "pdf", width = 4, height = 2.5, family = font) else print(p2)
-
   message("Identifying key discriminating variables...")
 
   # Identify the best machines
@@ -159,29 +137,15 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, saveto, seed, font) {
   names(importanceTable) <- colnames(trainings[[1]])
   importanceTable <- importanceTable[-1] # first value is habitat
 
-  # First plot along the spectrum of wavelengths
-  if(length(grep("wl", names(importanceTable))) != 0) {
-
-    wl_id <- grep("wl", names(importanceTable))
-    imp <- importanceTable[wl_id]
-    wls <-  as.numeric(gsub("wl", "", names(importanceTable)[wl_id]))
-    imp_along_spectrum <- cbind(wls, imp)
-    if(!missing(saveto)) pdf(pdfnames[3], width = 5, height = 4, family = font)
-    plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
-    if(!missing(saveto)) dev.off()
-
-    importanceTable <- importanceTable[-wl_id] # remove wavelengths from the importance table
-
-  }
-
   names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
   names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
 
-  # Then plot the rest of the variables
-  if(!missing(saveto)) pdf(pdfnames[4], width = 3, height = 4, family = font)
-  barplot(importanceTable, las = 1, ylab = "Importance")
-  if(!missing(saveto)) dev.off()
+  # Output
+  out <- list(results, importanceTable)
+  names(out) <- c("Results", "Importance")
 
   message("Done.")
+
+  return(out)
 
 }
