@@ -16,122 +16,105 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, seed) {
   # Load dependencies
   library(DescTools)
   library(caret)
-  library(pbapply)
   library(rminer)
 
   if(!missing("seed")) set.seed(seed)
 
   nhabitats <- nlevels(specdata$habitat)
 
-  # Permute nRepet times
-  ii <- lapply(seq_len(nRepet), function(it) {
-    return(sample(nrow(specdata), replace = F))
-  })
+  # Initialization
+  res <- matrix(0, nrow = 2 * nRepet, ncol = 6)
+  labels <- rep(c("Randomized", "Empirical"), each = nRepet)
+  confumats <- vector("list", nRepet)
+  machines <- vector("list", nRepet)
+  trainings <- vector("list", nRepet)
 
-  message(paste("Training", nRepet, "networks on permuted data..."))
+  # Loop through machines
+  for(i in 1:(2 * nRepet)) {
 
-  # Train neural networks on permuted data
-  permuted.res <- pblapply(ii, function(ii) {
+    # Permute the data if within the first half of the loop
+    if(i <= nRepet) {
 
-    habitats <- specdata$habitat[ii]
+      permid <- sample(nrow(specdata), replace = F)
+      permhabitats <- specdata$habitat[permid]
+      currdata <- data.frame(specdata[,vars], habitat = permhabitats)
 
-    # Assign random habitat to every lizard
-    d <- specdata[,vars]
-    d <- data.frame(d, habitat = habitats)
+    } else {
 
-    # Prepare training and testing datasets
-    inTraining <- caret::createDataPartition(d$habitat, p=0.5, list=F)
-    training <- d[inTraining,]
-    testing <- d[-inTraining,]
+      currdata <- data.frame(specdata[,vars], habitat = specdata$habitat)
 
-    # Balance training set so there are same numbers of each class
-    training <- DescTools::Strata(training, stratanames = "habitat", size = rep(min(table(training$habitat)),length(unique(training$habitat))))
+    }
+
+    message(paste0("Training machine ", i, "/", 2 * nRepet, "..."))
+
+    # Sample training and testing sets
+    istraining <- caret::createDataPartition(currdata$habitat, p = 0.5, list = F)
+    trainingset <- currdata[istraining,]
+    testingset <- currdata[-istraining,]
+
+    # Downsample the training set to ensure balance
+    trainingset <- DescTools::Strata(trainingset, stratanames = "habitat", size = rep(min(table(trainingset$habitat)), length(unique(trainingset$habitat))))
     drop <- c("stratum","size","id")
-    training <- training[,-which(colnames(training) %in% drop)]
+    trainingset <- trainingset[,-which(colnames(trainingset) %in% drop)]
 
-    # Fit neural network
-    svm.model <- fit(habitat~., data=training, model="svm", kernel = "rbfdot", task="class")
-    svm.pred <- predict(svm.model, testing[,-which(colnames(testing)=="habitat")])
+    # Record size of the training set
+    trainsize <- nrow(trainingset)
+
+    # Train the Vector Support Machine
+    svm.model <- fit(habitat ~ ., data = trainingset, model = "svm", kernel = "rbfdot", task = "class")
+
+    # How many support vectors?
+    nSupportVectors <- svm.model@object@nSV
+
+    # Parameters of the machine
+    sigma <- svm.model@mpar$kpar$sigma
+    cost <- svm.model@mpar$C
+
+    # Test the machine
+    svm.pred <- predict(svm.model, testingset[, -which(colnames(testingset) == "habitat")])
 
     # Confusion matrix
-    tab <- table(svm.pred, true=testing$habitat)
+    confusion <- table(svm.pred, true = testingset$habitat)
 
     # Assess performance
-    nSuccess <- sum(diag(tab))
-    nTotal <- sum(tab)
+    nSuccess <- sum(diag(confusion))
+    nTotal <- sum(confusion)
     propSuccess <- nSuccess / nTotal
 
+    # Test the performance against pure chance
     p.binom <- binom.test(nSuccess, nTotal, p = 1/nhabitats)$p.value
 
-    return(c(propSuccess, p.binom))
+    # Write output
+    res[i,1] <- propSuccess
+    res[i,2] <- p.binom
+    res[i,3] <- trainsize
+    res[i,4] <- nSupportVectors
+    res[i,5] <- sigma
+    res[i,6] <- cost
 
-  })
+    if(i > nRepet) {
+      confumats[[i - nRepet]] <- confusion
+      machines[[i - nRepet]] <- svm.model
+      trainings[[i - nRepet]] <- trainingset
+    }
 
-  permuted.res <- do.call("rbind", permuted.res)
+  }
 
-  message(paste("Training", nRepet, "networks on empirical data..."))
+  res <- data.frame(labels, res)
+  colnames(res) <- c("label", "propSuccess", "pBinom", "trainingSize", "nVectors", "sigma", "cost")
 
-  d <- data.frame(specdata[,c(vars, "habitat")])
-
-  empir <- pblapply(seq_len(nRepet), function(i) {
-
-    # Create training and test sets
-    inTraining <- createDataPartition(d$habitat, p=0.5, list=F)
-    training <- d[inTraining,]
-    testing <- d[-inTraining,]
-
-    # Balance training set so there are same numbers of each class
-    training <- DescTools::Strata(training, stratanames = "habitat", size = rep(min(table(training$habitat)),length(unique(training$habitat))))
-    drop <- c("stratum","size","id")
-    training <- training[,-which(colnames(training) %in% drop)]
-
-    # Fit the machine
-    svm.model <- fit(habitat~., data=training, model="svm", kernel = "rbfdot", task="class")
-    svm.pred <- predict(svm.model, testing[,-which(colnames(testing)=="habitat")])
-
-    # Confusion matrix
-    tab <- table(svm.pred, true=testing$habitat)
-
-    # Assess performance
-    nSuccess <- sum(diag(tab))
-    nTotal <- sum(tab)
-    propSuccess <- nSuccess / nTotal
-
-    p.binom <- binom.test(nSuccess, nTotal, p = 1/nhabitats)$p.value
-
-    out <- list(training = training, confutab = tab, machine = svm.model, success = c(propSuccess, p.binom))
-
-    # (Save training datasets for importance sampling)
-
-    return(out)
-
-  })
-
-  empirical.res <- lapply(empir, function(curr.machine) curr.machine$success)
-  empirical.res <- as.matrix(do.call("rbind", empirical.res))
-
-  labels <- factor(c(rep("Randomizations", nrow(permuted.res)), rep("Empirical", nrow(empirical.res))))
-  results <- cbind(as.data.frame(rbind(permuted.res, empirical.res)), labels)
-  colnames(results) <- c("propSuccess","p.value", "label")
-
-  message("Identifying key discriminating variables...")
+  message("Analyzing the best machines...")
 
   # Identify the best machines
-  quant95 <- quantile(results$propSuccess[results$label == "Empirical"], probs = 0.95)
-  idBestReps <- empirical.res[,1] >= quant95
+  quant95 <- quantile(res$propSuccess[res$label == "Empirical"], probs = 0.95)
+  bestid <-res$propSuccess[res$label == "Empirical"] >= quant95
 
-  # Subset machines, confusion matrices, and training sets to top 5%
-  machines <- lapply(empir, function(curr.machine) curr.machine$machine)
-  bestMachines <- machines[which(idBestReps)]
-  tabs <- lapply(empir, function(curr.machine) curr.machine$confutab)
-  bestTabs <- tabs[which(idBestReps)]
-  trainings <- lapply(empir, function(curr.machine) curr.machine$training)
-  bestTrainings <- trainings[which(idBestReps)]
+  bestmachines <- machines[bestid]
+  bestconfumats <- confumats[bestid]
+  besttrainings <- trainings[bestid]
 
   # Get Feature Importance for top 5% machines
-  bestFeatures <- pbmapply(Importance, bestMachines, bestTrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
-
-  # Use Importance function, need to either save training data (prob faster) or run inside loop (longer)
+  bestFeatures <- mapply(Importance, bestmachines, besttrainings, MoreArgs = list(method="sensv"), SIMPLIFY = FALSE)
   importanceTable <- sapply(bestFeatures,"[[","imp")
   if(ncol(cbind(importanceTable)) > 1) importanceTable <- rowSums(importanceTable) else importanceTable <- c(importanceTable)
   names(importanceTable) <- colnames(trainings[[1]])
@@ -140,9 +123,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, seed) {
   names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
   names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
 
-  # Output
-  out <- list(results, importanceTable)
-  names(out) <- c("Results", "Importance")
+  out <- list(res, importanceTable, bestconfumats, quant95)
 
   message("Done.")
 
