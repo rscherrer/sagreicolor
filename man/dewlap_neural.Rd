@@ -16,10 +16,13 @@ dewlap_neural(specdata, vars, nRepet = 1000, seed)
 \item{seed}{Seed for random number gnerators}
 }
 \value{
-A list of two data frames: one contains success and p-values for randomized and empirical data, the other contains the importance variables in the 5\% best classifiers.
+A list of outputs: (1) a table containing the success rate, binomial p-value, number of points in the training set, number of support vectors, Gaussian kernel sigma hyperparameter and cost parameter of each machine; (2) an importance table summarizing the weight each input variable among the 5\% best machines, (3) a list of the confusion matrices of all the 5\% best machines and (4) the 95th percentile success rate among the machines trained on non-randomized data (i.e. the threshold that defines the 5\% best machines).
 }
 \description{
 This function trains neural networks to recognize differences between habitats. Each neural network is trained on a random sample of half of the data, and tested against the other half. The success of the classification is compared to a null expectation generated from a permuted dataset where no differences exist between habitats. The 5\% best performing machines are studied more in depth to identify what were the most important variables in discriminating between habitats.
+}
+\details{
+A large number of machines are trained on the data. An equal number of machines are trained on randomized data, to produce a null distribution of the success rate. Each machine is trained on a training set. The training set is a random sample of half of the data points, which is then downsampled so that all groups are equally represented (balanced design). The machine is a classifier Support Vector Machine using a Gaussian kernel. After training, the machine is tested against the testing set, which is the other half of the data. We record the number of successful reassignments. This number is tested against chance by applying a binomial test. We record confusion matrices that show which groups were mistaken for which ones. Finally, we isolate the 5\% best machines (those with the highest scores) and display the weights of each of the input variables for these machines, thus giving an idea of what variables in the data contribute most to the differences between the groups.
 }
 \author{
 Raphael Scherrer
