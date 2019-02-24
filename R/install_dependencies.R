@@ -23,6 +23,12 @@ install_dependencies <- function(update = F) {
   }
 
   # Install the missing packages
-  install.packages(dependencies)
+  if(length(dependencies) > 0) {
+    install.packages(dependencies)
+    message("Dependencies successfully installed")
+  } else {
+    message("All dependencies are already installed")
+  }
+
 
 }
