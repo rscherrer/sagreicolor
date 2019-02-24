@@ -23,6 +23,6 @@ install_dependencies <- function(update = F) {
   }
 
   # Install the missing packages
-  install.packages(dependencies[toinstall])
+  install.packages(dependencies[dependencies])
 
 }
