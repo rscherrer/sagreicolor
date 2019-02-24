@@ -16,7 +16,7 @@ plot_neural_pvalues <- function(X, saveto, font) {
   loadfonts(quiet = T)
   if(missing(font)) font <- "Helvetica"
 
-  p <- ggplot(X, aes(x = p.value, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
+  p <- ggplot(X, aes(x = pBinom, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
 
   if(!missing(saveto)) {
     pdfname <- paste(saveto, "pvalues_neural_network.pdf", sep = '/')
