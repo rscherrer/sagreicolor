@@ -124,7 +124,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, seed) {
   names(importanceTable) <- gsub("meanrefl", "Mean\nreflectance", names(importanceTable))
   names(importanceTable) <- gsub("cuton", "Cut-on\nwavelength", names(importanceTable))
 
-  out <- list(res, importanceTable, bestconfumats, quant95)
+  out <- list(res = res, imp = importanceTable, conf = bestconfumats, quant95 = quant95)
 
   message("Done.")
 
