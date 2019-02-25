@@ -4,7 +4,7 @@
 \alias{plot_neural_success}
 \title{Plot neural network classification}
 \usage{
-plot_neural_success(X, saveto, font)
+plot_neural_success(X, saveto = ".", font)
 }
 \arguments{
 \item{X}{A data frame containing proportions of success for randomized and empirical data.}
