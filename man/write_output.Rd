@@ -4,10 +4,12 @@
 \alias{write_output}
 \title{Save output}
 \usage{
-write_output(results)
+write_output(results, whatHabitats)
 }
 \arguments{
 \item{results}{A list of results.}
+
+\item{whatHabitats}{What habitats?}
 }
 \description{
 Function to write output to text file

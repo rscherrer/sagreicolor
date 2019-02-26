@@ -3,11 +3,12 @@
 #' Function to write output to text file
 #'
 #' @param results A list of results.
+#' @param whatHabitats What habitats?
 #' @author Raphael Scherrer
 #' @export
 
 # Function to write output to text file
-write_output <- function(results) {
+write_output <- function(results, whatHabitats) {
 
   headers <- c(
     "\nAnalyses of Variance\n\n",
