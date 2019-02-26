@@ -4,6 +4,7 @@
 #'
 #' @param neural.res The output of \code{dewlap_neural}.
 #' @param nested.res The output of \code{dewlap_neural_nested}.
+#' @return A list of SVM outputs.
 #' @author Raphael Scherrer
 #' @export
 
@@ -16,5 +17,6 @@ save_svm_results <- function(neural.res, nested.res) {
   svm.res[[length(svm.res) + 1]] <- neural.res
   names(svm.res) <- c(levels(specdata$island), "Archipelago")
   saveRDS(svm.res, "results/svm/svm_results.rds")
+  return(svm.res)
 
 }

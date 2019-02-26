@@ -11,6 +11,9 @@ save_svm_results(neural.res, nested.res)
 
 \item{nested.res}{The output of \code{dewlap_neural_nested}.}
 }
+\value{
+A list of SVM outputs.
+}
 \description{
 Function to save the results of the Support Vector Machine analysis
 }
