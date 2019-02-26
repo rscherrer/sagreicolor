@@ -11,28 +11,35 @@
 #' @export
 
 # This function applies the neural network analysis on each island separately
-dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed) {
+dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed = 42) {
 
-  if(!missing("seed")) set.seed(seed)
+  # Repeat the analysis for each island this time
+  islands <- levels(specdata$island)
 
-  nislands <- nlevels(specdata$island)
+  nested.res <- lapply(islands, function(curr.island) {
 
-  out <- list()
+    message(paste("Current island:", curr.island))
 
-  # Loop through islands
-  for(i in seq_len(nislands)) {
+    # Create a directory for the current island if does not already exist
+    dir.create(curr.island, showWarnings = FALSE)
 
-    message(paste0("Island ", i, "/", nislands, ":"))
+    # Go into the right directory
+    homedir <- getwd()
+    setwd(curr.island)
 
-    curr.island <- levels(specdata$island)[i]
-    curr.specdata <- droplevels(specdata[specdata$island == curr.island,])
+    # Subset the data
+    specdata <- droplevels(subset(specdata, island == curr.island))
 
-    # Apply neural networks
-    out[[i]] <- dewlap_neural(curr.specdata, vars, nRepet)
+    # Apply the neural network function, without seed
+    curr.res <- dewlap_neural(specdata, vars, nRepet = nRepet)
 
-  }
+    # Go back to home directory
+    setwd(homedir)
 
-  names(out) <- levels(specdata$island)
-  return(out)
+    return(curr.res)
+
+  })
+
+  return(nested.res)
 
 }

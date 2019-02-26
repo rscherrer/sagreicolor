@@ -4,7 +4,7 @@
 \alias{dewlap_neural_nested}
 \title{Habitat classification with neural networks per island}
 \usage{
-dewlap_neural_nested(specdata, vars, nRepet = 1000, seed)
+dewlap_neural_nested(specdata, vars, nRepet = 1000, seed = 42)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
