@@ -24,7 +24,7 @@ test_contrasts(W, specdata, vars, parametric = T, plotit = T,
 A list with one element for each dependent variable in \code{vars}. Each element is a data frame with columns:
 }
 \description{
-This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95% confidence intervals of the differences in means.
+This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95\% confidence intervals of the differences in means.
 }
 \note{
 Parametric workflow as per Salvatore S. Mangiafico (https://rcompanion.org/rcompanion/h_01.html). Non-parametric workflow from the package description of nparcomp. Note also that performing multiple comparisons one dependent variable at a time is not so bad if variables have limited correlation, as in the case of principal components (Krishnaiah and Reising 2006).

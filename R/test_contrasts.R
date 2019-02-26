@@ -1,6 +1,6 @@
 #' Test (multiple) univariate contrasts
 #'
-#' This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95% confidence intervals of the differences in means.
+#' This function tests for significant contrasts between habitat-means within islands in one or several dependent variables independently. The procedure is either parametric (package multcomp) or non-parametric (package nparcomp). The function can also plot the 95\% confidence intervals of the differences in means.
 #'
 #' @param W A matrix indicating all contrasts to be tested, or a vector if only one contrast. The number of rows is the number of contrasts to test. The number of columns is the number of groups. The matrix/vector is filled with zeros, except for a 1 and a -1 at the position of the groups that are to be contrasted.
 #' @param specdata A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".
