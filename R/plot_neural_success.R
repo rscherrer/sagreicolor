@@ -16,7 +16,7 @@ plot_neural_success <- function(X, saveto, font) {
   loadfonts(quiet = T)
   if(missing(font)) font <- "Helvetica"
 
-  if(missing(X)) X <- readRDS(paste0(saveto, "svm_results.rds"))
+  if(missing(X)) X <- readRDS(paste(saveto, "svm_results.rds", sep = "/"))
 
   p <- ggplot(X, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
 
