@@ -23,7 +23,7 @@ make_dataset <- function(what_habitats, spot = 2) {
   specdata <- sagreicolor::process_spectra(specs, locale, spot)
 
   # Reduce to the wanted habitats
-  specdata <- sagreicolor::subset_habitats(specdata, whatHabitats, inclusive = T)
+  specdata <- sagreicolor::subset_habitats(specdata, what_habitats, inclusive = T)
 
   # Remove missing entries from spectral dataset
   specs <- sagreicolor::df2rspec(specdata)
