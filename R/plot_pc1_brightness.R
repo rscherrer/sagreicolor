@@ -10,7 +10,7 @@
 # Function to plot PC1 against mean reflectance
 plot_pc1_brightness <- function(specdata) {
 
-  plot(PC1 ~ meanrefl, data = specdata, pch = 16, xlab = "Mean reflectance", ylab = "PC1")
+  plot(PC1 ~ meanrefl, data = specdata, pch = 16, xlab = "Mean reflectance", ylab = "PC1", las = 1)
   with(specdata, cor.test(PC1, meanrefl))
 
 }
