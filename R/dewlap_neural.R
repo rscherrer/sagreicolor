@@ -129,7 +129,7 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, seed, plotit = F) {
 
   message("Done.")
 
-  if(plotit) plot_neural_success(out)
+  if(plotit) plot_neural_success(out$res)
 
   return(out)
 
