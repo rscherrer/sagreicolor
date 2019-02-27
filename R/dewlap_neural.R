@@ -6,13 +6,14 @@
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param nRepet The number of neural networks to train (same number for empirical and permuted datasets).
 #' @param seed Seed for random number gnerators
+#' @param plotit Whether to plot the success or not
 #' @details A large number of machines are trained on the data. An equal number of machines are trained on randomized data, to produce a null distribution of the success rate. Each machine is trained on a training set. The training set is a random sample of half of the data points, which is then downsampled so that all groups are equally represented (balanced design). The machine is a classifier Support Vector Machine using a Gaussian kernel. After training, the machine is tested against the testing set, which is the other half of the data. We record the number of successful reassignments. This number is tested against chance by applying a binomial test. We record confusion matrices that show which groups were mistaken for which ones. Finally, we isolate the 5\% best machines (those with the highest scores) and display the weights of each of the input variables for these machines, thus giving an idea of what variables in the data contribute most to the differences between the groups.
 #' @return A list of outputs: (1) a table containing the success rate, binomial p-value, number of points in the training set, number of support vectors, Gaussian kernel sigma hyperparameter and cost parameter of each machine; (2) an importance table summarizing the weight each input variable among the 5\% best machines, (3) a list of the confusion matrices of all the 5\% best machines and (4) the 95th percentile success rate among the machines trained on non-randomized data (i.e. the threshold that defines the 5\% best machines).
 #' @author Raphael Scherrer
 #' @export
 
 # Function to train neural networks to detect differences between habitats
-dewlap_neural <- function(specdata, vars, nRepet = 1000, seed) {
+dewlap_neural <- function(specdata, vars, nRepet = 1000, seed, plotit = F) {
 
   # Load dependencies
   library(DescTools)
@@ -127,6 +128,8 @@ dewlap_neural <- function(specdata, vars, nRepet = 1000, seed) {
   out <- list(res = res, imp = importanceTable, conf = bestconfumats, quant95 = quant95)
 
   message("Done.")
+
+  if(plotit) plot_neural_success(out)
 
   return(out)
 

@@ -4,7 +4,7 @@
 \alias{dewlap_neural}
 \title{Habitat classification with neural networks}
 \usage{
-dewlap_neural(specdata, vars, nRepet = 1000, seed)
+dewlap_neural(specdata, vars, nRepet = 1000, seed, plotit = F)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -14,6 +14,8 @@ dewlap_neural(specdata, vars, nRepet = 1000, seed)
 \item{nRepet}{The number of neural networks to train (same number for empirical and permuted datasets).}
 
 \item{seed}{Seed for random number gnerators}
+
+\item{plotit}{Whether to plot the success or not}
 }
 \value{
 A list of outputs: (1) a table containing the success rate, binomial p-value, number of points in the training set, number of support vectors, Gaussian kernel sigma hyperparameter and cost parameter of each machine; (2) an importance table summarizing the weight each input variable among the 5\% best machines, (3) a list of the confusion matrices of all the 5\% best machines and (4) the 95th percentile success rate among the machines trained on non-randomized data (i.e. the threshold that defines the 5\% best machines).
