@@ -8,6 +8,7 @@
 #' @return Just plots.
 #' @author Raphael Scherrer
 #' @export
+
 # Function to plot the results of a neural network classification analysis
 plot_neural_success <- function(X, saveto, font) {
 
