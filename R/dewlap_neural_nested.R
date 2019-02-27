@@ -32,7 +32,7 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed = 42, ploti
     specdata <- droplevels(subset(specdata, island == curr.island))
 
     # Apply the neural network function, without seed
-    curr.res <- dewlap_neural(specdata, vars, nRepet = nRepet, plotit)
+    curr.res <- dewlap_neural(specdata, vars, nRepet = nRepet, plotit = plotit)
 
     # Go back to home directory
     setwd(homedir)
