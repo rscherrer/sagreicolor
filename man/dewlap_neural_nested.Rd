@@ -4,7 +4,8 @@
 \alias{dewlap_neural_nested}
 \title{Habitat classification with neural networks per island}
 \usage{
-dewlap_neural_nested(specdata, vars, nRepet = 1000, seed = 42)
+dewlap_neural_nested(specdata, vars, nRepet = 1000, seed = 42,
+  plotit = F)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "habitat".}
@@ -14,6 +15,8 @@ dewlap_neural_nested(specdata, vars, nRepet = 1000, seed = 42)
 \item{nRepet}{The number of neural networks to train (same number for empirical and permuted datasets).}
 
 \item{seed}{Seed for random number generators}
+
+\item{plotit}{Whether to plot the success or not}
 }
 \value{
 A list of lists, each the output of dewlap_neural.

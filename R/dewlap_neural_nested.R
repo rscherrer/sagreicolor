@@ -6,12 +6,13 @@
 #' @param vars A character or integer vector. The names, or indices, of the dependent variables in \code{specdata}.
 #' @param nRepet The number of neural networks to train (same number for empirical and permuted datasets).
 #' @param seed Seed for random number generators
+#' @param plotit Whether to plot the success or not
 #' @return A list of lists, each the output of dewlap_neural.
 #' @author Raphael Scherrer
 #' @export
 
 # This function applies the neural network analysis on each island separately
-dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed = 42) {
+dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed = 42, plotit = F) {
 
   # Repeat the analysis for each island this time
   islands <- levels(specdata$island)
@@ -31,7 +32,7 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed = 42) {
     specdata <- droplevels(subset(specdata, island == curr.island))
 
     # Apply the neural network function, without seed
-    curr.res <- dewlap_neural(specdata, vars, nRepet = nRepet)
+    curr.res <- dewlap_neural(specdata, vars, nRepet = nRepet, plotit)
 
     # Go back to home directory
     setwd(homedir)
