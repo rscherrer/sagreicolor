@@ -4,12 +4,14 @@
 \alias{subset_habitats}
 \title{Subset of the spectral dataset}
 \usage{
-subset_habitats(specdata, whatHabitats)
+subset_habitats(specdata, whatHabitats, inclusive = F)
 }
 \arguments{
 \item{specdata}{A data frame containing at least columns for the dependent variables, as well as a column "island" and a column "habitat".}
 
 \item{whatHabitats}{A character vector. What habitats to retain?}
+
+\item{inclusive}{Do we include the islands with some but not all of the wanted habitats (Conception)? If \code{FALSE}, keep only the islands with all the wanted habitats.}
 }
 \value{
 A data frame, a subset of \code{specdata}.
