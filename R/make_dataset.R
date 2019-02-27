@@ -19,12 +19,6 @@ make_dataset <- function(what_habitats, spot = 2) {
   # Read locality data
   locale <- readRDS("data/locale.rds")
 
-  # What habitats do we want?
-  whatHabitats <- c("coastal", "coppice", "mangrove")
-
-  # Choose a spot to study
-  spot <- 2
-
   # Process the spectra into a data frame
   specdata <- sagreicolor::process_spectra(specs, locale, spot)
 
