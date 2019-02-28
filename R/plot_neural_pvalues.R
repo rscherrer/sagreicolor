@@ -19,6 +19,7 @@ plot_neural_pvalues <- function(X, saveto, font) {
   p <- ggplot(X, aes(x = pBinom, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100 ) + theme_bw() + xlab("Binomial test P-value") + ylab("Count") + theme(legend.title = element_blank())
 
   if(!missing(saveto)) {
+    dir.create(saveto, showWarnings = F)
     pdfname <- paste(saveto, "pvalues_neural_network.pdf", sep = '/')
     ggsave(pdfname, p, device = "pdf", width = 4, height = 2.5, family = font)
   } else print(p)

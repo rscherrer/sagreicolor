@@ -24,6 +24,7 @@ plot_neural_spectrum <- function(X, saveto, font) {
     imp_along_spectrum <- cbind(wls, imp)
 
     if(!missing(saveto)) {
+      dir.create(saveto, showWarnings = F)
       pdfname <- paste(saveto, "importance_along_spectrum.pdf", sep = "/")
       pdf(pdfname, width = 5, height = 4, family = font)
     }

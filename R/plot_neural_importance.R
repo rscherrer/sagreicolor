@@ -27,6 +27,7 @@ plot_neural_importance <- function(X, saveto, font) {
   if(length(X) == 0) stop("no variable other than wavelengths")
 
   if(!missing(saveto)) {
+    dir.create(saveto, showWarnings = F)
     pdfname <- paste(saveto, "importance.pdf", sep = "/")
     pdf(pdfname, width = 5, height = 4, family = font)
   }
