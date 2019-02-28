@@ -20,6 +20,7 @@ plot_neural_success <- function(X, saveto, font) {
   p <- ggplot(X, aes(x = propSuccess, fill=label))  + geom_histogram(position="identity", alpha=0.5, bins = 100) + theme_bw() + xlab("Proportion of success") + ylab("Count") + theme(legend.title = element_blank())
 
   if(!missing(saveto)) {
+    dir.create(saveto, showWarnings = F)
     pdfname <- paste(saveto, "success_neural_network.pdf", sep = '/')
     ggsave(pdfname, p, device = "pdf", width = 4, height = 2.5, family = font)
   } else print(p)
