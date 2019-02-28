@@ -17,7 +17,7 @@ save_svm_results <- function(neural.res, nested.res, saveto = '.') {
   svm.res <- nested.res
   svm.res[[length(svm.res) + 1]] <- neural.res
   names(svm.res) <- c(levels(specdata$island), "Archipelago")
-  saveRDS(svm.res, "results/svm/svm_results.rds")
+  saveRDS(svm.res, paste(saveto, "svm_results.rds", sep = "/"))
   return(svm.res)
 
 }
