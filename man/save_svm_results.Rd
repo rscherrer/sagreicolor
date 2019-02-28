@@ -4,12 +4,14 @@
 \alias{save_svm_results}
 \title{Save SVM output}
 \usage{
-save_svm_results(neural.res, nested.res)
+save_svm_results(neural.res, nested.res, saveto = ".")
 }
 \arguments{
 \item{neural.res}{The output of \code{dewlap_neural}.}
 
 \item{nested.res}{The output of \code{dewlap_neural_nested}.}
+
+\item{saveto}{Where to save the output?}
 }
 \value{
 A list of SVM outputs.
