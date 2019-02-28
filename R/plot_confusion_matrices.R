@@ -22,8 +22,8 @@ plot_confusion_matrices <- function(sumconfs, saveto, font) {
   mapply(function(confmat, curr.island) {
 
     cex <- c(confmat)
-    x <- rep(rev(seq(-1, 1, length.out = ncol(confmat))), ncol(confmat))
-    y <- rep(seq(-1, 1, length.out = ncol(confmat)), each = ncol(confmat))
+    y <- rep(rev(seq(-1, 1, length.out = ncol(confmat))), ncol(confmat))
+    x <- rep(seq(-1, 1, length.out = ncol(confmat)), each = ncol(confmat))
     cols <- matrix("red", ncol = ncol(confmat), nrow = nrow(confmat))
     diag(cols) <- "green"
     cols <- c(cols)
