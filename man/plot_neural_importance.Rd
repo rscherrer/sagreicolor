@@ -4,20 +4,17 @@
 \alias{plot_neural_importance}
 \title{Plot importance of variables in discriminating between habitats}
 \usage{
-plot_neural_importance(X, saveto, font)
+plot_neural_importance(importance, saveto, font)
 }
 \arguments{
-\item{X}{The importance table returned by plot_neural.}
+\item{importance}{The importance table returned by \code{plot_neural} (the \code{imp} field).}
 
 \item{saveto}{Where to save the PDF plot, optional}
 
 \item{font}{Font to be used in the plots. Defaults to Helvetica.}
 }
-\value{
-Just plots.
-}
 \description{
-This function plots the importance of non-wavelengths in discriminating habitats by the 5\% best neural networks
+This function plots the importance of (wavelength and non-wavelength) variables in discriminating habitats by the 5\% best neural networks. Importance is defined as the cumulative weights of the input nodes.
 }
 \author{
 Raphael Scherrer
