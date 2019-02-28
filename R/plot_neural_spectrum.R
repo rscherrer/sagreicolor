@@ -28,7 +28,7 @@ plot_neural_spectrum <- function(X, saveto, font) {
       pdfname <- paste(saveto, "importance_along_spectrum.pdf", sep = "/")
       pdf(pdfname, width = 5, height = 4, family = font)
     }
-    plot(imp_along_spectrum, ylab="Importance",xlab="Wavelength", type="l", las = 1)
+    plot(imp_along_spectrum, ylab="Importance", xlab="Wavelength (nm)", type="l", las = 1)
     if(!missing(saveto)) dev.off()
 
   } else stop("no wavelength found")
