@@ -20,4 +20,32 @@ cumulate_confusion_matrices <- function(svm.res) {
 
   })
 
+  # Make sure all confusion matrices have the same dimensions (some islands don't have the same number of habitats e.g. Conception)
+  habitats <- unlist(lapply(sumconfs, colnames)[sapply(sumconfs, ncol) == max(sapply(sumconfs, ncol))][1])
+  cols2add <- sapply(sumconfs, function(x) length(habitats) - ncol(x))
+
+  sumconfs <- mapply(function(confmat, cols2add) {
+
+    if(cols2add > 0) {
+
+      confmat <- cbind(confmat, matrix(0, nrow = nrow(confmat), ncol = cols2add))
+      confmat <- rbind(confmat, matrix(0, nrow = cols2add, ncol = ncol(confmat)))
+
+      missinghabitats <- habitats[!habitats %in% colnames(confmat)]
+      colnames(confmat)[grep("^$", colnames(confmat))] <- missinghabitats
+      rownames(confmat)[grep("^$", rownames(confmat))] <- missinghabitats
+
+      neworder <- match(colnames(confmat), habitats)
+
+      confmat <- confmat[,neworder]
+      confmat <- confmat[neworder,]
+
+    }
+
+    return(confmat)
+
+  }, sumconfs, cols2add, SIMPLIFY = F)
+
+  return(sumconfs)
+
 }
