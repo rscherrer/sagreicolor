@@ -66,7 +66,7 @@ dewlap_gls <- function(specdata, vars, method = "bonferroni", plotit = F) {
     # Plot residuals versus fitted values
     residuals <- resid(mod.best, type = "pearson")
     fitted <- fitted(mod.best)
-    plot(residuals ~ fitted, main = curr.var)
+    if(plotit) plot(residuals ~ fitted, main = curr.var)
 
     # Output
     gls.res <- list(aic.res, anova.res)
