@@ -21,21 +21,11 @@ dewlap_neural_nested <- function(specdata, vars, nRepet = 1000, seed = 42, ploti
 
     message(paste("Current island:", curr.island))
 
-    # Create a directory for the current island if does not already exist
-    dir.create(curr.island, showWarnings = FALSE)
-
-    # Go into the right directory
-    homedir <- getwd()
-    setwd(curr.island)
-
     # Subset the data
     specdata <- droplevels(subset(specdata, island == curr.island))
 
     # Apply the neural network function, without seed
     curr.res <- dewlap_neural(specdata, vars, nRepet = nRepet, plotit = plotit)
-
-    # Go back to home directory
-    setwd(homedir)
 
     return(curr.res)
 
