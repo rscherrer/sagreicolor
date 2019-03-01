@@ -109,6 +109,8 @@ check_spatialcorr_nested <- function(specdata, vars, plotit = T, test = "moran",
 
   })
 
+  names(res) <- levels(specdata$island)
+
   return(res)
 
 }
