@@ -91,12 +91,12 @@ check_spatialcorr <- function(specdata, vars, plotit = T, test = "moran", method
 
   } else if(test == "moran") {
 
+    message("Performing Moran's I test...")
+
     # Or perform (multiple) Moran's I tests
     res <- apply(residuals, 2, function(residuals) {
       ape::Moran.I(residuals, weight = w, alternative = "greater")
     })
-
-    message("Performing Moran's I test...")
 
     res <- as.data.frame(do.call("rbind", res))
 
