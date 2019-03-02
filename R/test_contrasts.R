@@ -37,7 +37,7 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
   # Grouping
   grouping <- with(specdata, island:habitat)
-  groups <- unique(grouping)
+  groups <- levels(as.factor(grouping))
 
   # Apply to each dependent variable
   testContrasts <- lapply(seq_len(ncol(Y)), function(i) {

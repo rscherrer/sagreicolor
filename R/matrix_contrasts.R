@@ -9,48 +9,48 @@
 
 # Function to create a matrix of contrast weights between habitats on each island
 matrix_contrasts <- function(specdata) {
-  
+
   # What are the groups?
   grouping <- with(specdata, island:habitat)
-  groups <- unique(grouping)
-  
+  groups <- levels(as.factor(grouping))
+
   # Matrix of contrast weights between habitats within islands
   W <- lapply(levels(specdata$island), function(curr.island) {
-    
+
     # What habitats are on this island?
     curr.habitats <- levels(droplevels(with(specdata, habitat[island == curr.island])))
-    
+
     # All pairwise comparisons
     contrasts <- combn(curr.habitats, 2)
-    
+
     # For each contrast (column)...
     W <- apply(contrasts, 2,  function(curr.contrast) {
-      
+
       # Locate first habitat
       i <- grep(paste0(curr.island, ".*", curr.contrast[1]), groups)
-      
+
       # Locate second habitat
       j <- grep(paste0(curr.island, ".*", curr.contrast[2]), groups)
-      
+
       # Create a vector of contrast weights
       W <- rep(0, length(groups))
       W[i] <- 1
       W[j] <- -1
-      
+
       return(W)
-      
+
     })
-    
+
     # Transpose to have each row corresponding to one contrast
     W <- t(W)
-    
+
     return(W)
-    
+
   })
-  
+
   # Merge all vectors of contrast weights into a single matrix
   W <- do.call("rbind", W)
-  
+
   return(W)
-  
+
 }
