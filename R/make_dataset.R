@@ -44,6 +44,8 @@ make_dataset <- function(what_habitats, spot = 2) {
   # Bind Principal Components to the data frame
   specdata <- cbind(specdata, dewlaPCA$x)
 
+  specdata <- specdata[order(specdata$island, specdata$habitat),]
+
   # Save the data
   write.csv(specdata, "data/specdata.csv")
 
