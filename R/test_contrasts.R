@@ -14,6 +14,7 @@
 #' @export
 
 # Function to test for significant contrasts in a set of dependent variables independently (parametric or non-parametric)
+
 test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method = "bonferroni") {
 
   # Load packages
@@ -95,9 +96,13 @@ test_contrasts <- function(W, specdata, vars, parametric = T, plotit = T, method
 
     contrasts <- t(contrasts)
 
-    testContrasts <- cbind(contrasts, testContrasts)
+    differences <- apply(contrasts, 1, function(contrast) {
+      mean(Y[grouping == contrast[1]]) - mean(Y[grouping == contrast[2]])
+    })
 
-    colnames(testContrasts)[c(1,2)] <- c("hab1", "hab2")
+    testContrasts <- cbind(contrasts, differences, testContrasts)
+
+    colnames(testContrasts)[c(1,2,3)] <- c("hab1", "hab2", "diff")
 
     return(testContrasts)
 
