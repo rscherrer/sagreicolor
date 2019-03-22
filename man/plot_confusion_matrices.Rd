@@ -4,7 +4,8 @@
 \alias{plot_confusion_matrices}
 \title{Plot neural network confusion matrices}
 \usage{
-plot_confusion_matrices(sumconfs, saveto, font)
+plot_confusion_matrices(sumconfs, saveto, font, colors = c("#fc8d62",
+  "#66c2a5"))
 }
 \arguments{
 \item{sumconfs}{A list of confusion matrices.}
@@ -12,6 +13,8 @@ plot_confusion_matrices(sumconfs, saveto, font)
 \item{saveto}{Where to save the PDF plot, optional}
 
 \item{font}{Font to be used in the plots. Defaults to Helvetica.}
+
+\item{colors}{Two colors to be used for incorrect (1) and correct (2) classifications}
 }
 \description{
 This function plots the cumulated confusion matrices of the neural networks.
